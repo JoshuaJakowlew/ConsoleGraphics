@@ -9,16 +9,16 @@ namespace cg
 	Color::Color(CHAR_INFO color) noexcept :
 		Color(
 			color.Char.UnicodeChar,
-			Color::getBgColor(color.Attributes),
-			Color::getFgColor(color.Attributes)
+			getBgColor(color.Attributes),
+			getFgColor(color.Attributes)
 		)
 	{}
 
 	Color::Color(wchar_t glyph, uint16_t color) noexcept :
 		Color(
 			glyph,
-			Color::getBgColor(color),
-			Color::getFgColor(color)
+			getBgColor(color),
+			getFgColor(color)
 		)
 	{}
 

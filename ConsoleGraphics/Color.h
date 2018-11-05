@@ -34,12 +34,7 @@ namespace cg
 		Color(wchar_t glyph, uint16_t color) noexcept;
 		Color(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept;
 
-		inline CHAR_INFO toCharInfo() const noexcept;
-
-		inline static CHAR_INFO makeCharInfo(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept;
-		inline static uint16_t combine(uint16_t bgColor, uint16_t fgColor) noexcept;
-		inline static uint16_t getBgColor(uint16_t color) noexcept;
-		inline static uint16_t getFgColor(uint16_t color) noexcept;
+		[[nodiscard]] inline CHAR_INFO toCharInfo() const noexcept;
 
 		wchar_t glyph;
 		uint16_t bgColor;
@@ -54,7 +49,7 @@ namespace cg
 		return ci;
 	}
 
-	inline CHAR_INFO Color::makeCharInfo(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept
+	[[nodiscard]] inline CHAR_INFO makeCharInfo(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept
 	{
 		CHAR_INFO ci;
 		ci.Char.UnicodeChar = glyph;
@@ -62,17 +57,17 @@ namespace cg
 		return ci;
 	}
 
-	inline uint16_t Color::combine(uint16_t bgColor, uint16_t fgColor) noexcept
+	[[nodiscard]] inline uint16_t combine(uint16_t bgColor, uint16_t fgColor) noexcept
 	{
 		return (bgColor << 4) | fgColor;
 	}
 
-	inline uint16_t Color::getBgColor(uint16_t color) noexcept
+	[[nodiscard]] inline uint16_t getBgColor(uint16_t color) noexcept
 	{
 		return color >> 4;
 	}
 
-	inline uint16_t Color::getFgColor(uint16_t color) noexcept
+	[[nodiscard]] inline uint16_t getFgColor(uint16_t color) noexcept
 	{
 		return color & 0xF;
 	}

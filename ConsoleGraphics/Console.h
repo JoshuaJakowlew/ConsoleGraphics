@@ -10,16 +10,16 @@ namespace cg
 	class Console : public RenderSurface
 	{
 	public:
-		Console(Vec2u resolution, Vec2u font_size);
+		explicit Console(Vec2u resolution, Vec2u font_size);
 		Console(const Console&) = delete;
 		Console& operator=(const Console&) = delete;
-		~Console();
+		~Console() noexcept;
 
-		bool create();
-		void display();
+		[[nodiscard]] bool create() noexcept;
+		[[nodiscard]] bool display() noexcept;
 
-		inline Vec2u getResolution() const noexcept;
-		inline Vec2u getMaxResolution() const noexcept;
+		[[nodiscard]] inline Vec2u getResolution() const noexcept;
+		[[nodiscard]] inline Vec2u getMaxResolution() const noexcept;
 	private:
 		struct Handles
 		{
@@ -34,12 +34,13 @@ namespace cg
 		Vec2u m_maxResolution;
 		Vec2u m_fontSize;
 
-		Vec2u getMaxScreenBufferSize();
-		bool getStdHandles();
-		bool createScreenBuffer();
-		bool configureOutput();
-		bool assignScreenBuffer();
-		bool setFontSize(Vec2u fontSize);
+		[[nodiscard]] Vec2u getMaxScreenBufferSize();
+		[[nodiscard]] bool getStdHandles();
+		[[nodiscard]] bool createScreenBuffer();
+		[[nodiscard]] bool configureOutput();
+		[[nodiscard]] bool assignScreenBuffer();
+		[[nodiscard]] bool disableCursor();
+		[[nodiscard]] bool setFontSize(Vec2u fontSize);
 	};
 } // namespace cg
 

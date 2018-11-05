@@ -19,11 +19,12 @@ namespace cg
 		RenderSurface(Vec2u size);
 		RenderSurface(unsigned width, unsigned height);
 
-		inline Vec2u getSize() const noexcept;
+		[[nodiscard]] inline Vec2u getSize() const noexcept;
 
-		inline CHAR_INFO& getCell(Vec2i coords);
-		inline CHAR_INFO * getLine(int line);
-		inline CHAR_INFO * getBuffer();
+		[[nodiscard]] inline CHAR_INFO& getCell(Vec2i coords);
+		[[nodiscard]] inline CHAR_INFO * getLine(int line);
+		[[nodiscard]] inline CHAR_INFO * getBuffer();
+
 		void putCell(Vec2i coords, Color color);
 		void putCell(int x, int y, Color color);
 		void putCell(Vec2i coords, CHAR_INFO color);
@@ -76,13 +77,21 @@ namespace cg
 
 	inline CHAR_INFO& RenderSurface::getCell(Vec2i coords)
 	{
-		assert(coords.x >= 0 && coords.y >= 0 && coords.x < m_width && coords.y < m_height);
+		assert(
+			coords.x >= 0 &&
+			coords.y >= 0 &&
+			coords.x < static_cast<long long>(m_width) &&
+			coords.y < static_cast<long long>(m_height)
+		);
 		return m_surface[m_width * coords.y + coords.x];
 	}
 
 	CHAR_INFO * RenderSurface::getLine(int line)
 	{
-		assert(line >= 0 && line < m_height);
+		assert(
+			line >= 0 &&
+			line < static_cast<long long>(m_height)
+		);
 		assert(&m_surface[m_width * line] != nullptr);
 		return &m_surface[m_width * line];
 	}

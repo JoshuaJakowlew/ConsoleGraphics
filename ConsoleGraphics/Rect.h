@@ -22,15 +22,19 @@ namespace cg
 	};
 
 	template <typename T>
+	[[nodiscard]]
 	inline bool operator ==(const Rect<T>& left, const Rect<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline bool operator !=(const Rect<T>& left, const Rect<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	void sizeToCoords(T& width, T& height);
 
 	template <typename T>
+	[[nodiscard]]
 	Rect<T> rectToCoords(const Rect<T>& rect);
 
 	typedef Rect<int>			IntRect;

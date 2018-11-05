@@ -16,39 +16,51 @@ namespace cg
 	};
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T> operator-(const Vec2<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T>& operator +=(Vec2<T>& left, const Vec2<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T>& operator -=(Vec2<T>& left, const Vec2<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T> operator +(const Vec2<T>& left, const Vec2<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T> operator -(const Vec2<T>& left, const Vec2<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T> operator *(const Vec2<T>& left, T right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T> operator *(T left, const Vec2<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T>& operator *=(Vec2<T>& left, T right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T> operator /(const Vec2<T>& left, T right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline Vec2<T>& operator /=(Vec2<T>& left, T right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline bool operator ==(const Vec2<T>& left, const Vec2<T>& right) noexcept;
 
 	template <typename T>
+	[[nodiscard]]
 	inline bool operator !=(const Vec2<T>& left, const Vec2<T>& right) noexcept;
 
 	typedef Vec2<int>			Vec2i;
