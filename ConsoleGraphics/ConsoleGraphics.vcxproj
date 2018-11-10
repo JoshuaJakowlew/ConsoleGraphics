@@ -142,13 +142,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Color.cpp" />
-    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="RenderConsole.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RenderSurface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="RenderConsole.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="RenderSurface.h" />
     <ClInclude Include="Vec2.h" />

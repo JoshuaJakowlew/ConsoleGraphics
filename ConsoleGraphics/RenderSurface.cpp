@@ -7,10 +7,11 @@ namespace cg
 	{}
 
 	RenderSurface::RenderSurface(unsigned width, unsigned height) :
-		m_width(width),
-		m_height(height),
-		m_surface(width * height, makeCharInfo(' ', Color::Black, Color::Gray))
-	{}
+		m_surfaceSize{ width, height },
+		m_surface{ width * height, makeCharInfo(' ', Color::Black, Color::Gray) }
+	{
+		m_surface.shrink_to_fit();
+	}
 
 	void RenderSurface::putCell(Vec2i coords, Color color)
 	{
@@ -29,7 +30,11 @@ namespace cg
 
 	void RenderSurface::putCell(int x, int y, CHAR_INFO color)
 	{
-		size_t pos = y * m_width + x;
+		[[unliekly]]
+		if (!on_surface(x, y))
+			return;
+
+		size_t pos = y * m_surfaceSize.x + x;
 		m_surface[pos] = color;
 	}
 
@@ -50,6 +55,8 @@ namespace cg
 
 	void RenderSurface::drawLine(int x0, int y0, int x1, int y1, CHAR_INFO color)
 	{
+		//clamp(x0, y0, x1, y1);
+
 		bool steep = false;
 		if (std::abs(x0 - x1) < std::abs(y0 - y1))
 		{
@@ -117,6 +124,8 @@ namespace cg
 		if (width < 0) width = width + 1;
 		if (height < 0) height = height + 1;
 
+		
+
 		drawLine(x, y, x + width, y, color);
 		drawLine(x + width, y, x + width, y + height, color);
 		drawLine(x + width, y + height, x, y + height, color);
@@ -162,9 +171,9 @@ namespace cg
 			height = std::abs(height) + 1;
 		}
 
-		for (int ypos = y; ypos < width; ++ypos)
+		for (int ypos = y; ypos < height + y; ++ypos)
 		{
-			for (int xpos = x; xpos < height; ++xpos)
+			for (int xpos = x; xpos < width + x; ++xpos)
 			{
 				putCell(xpos, ypos, color);
 			}
@@ -188,11 +197,10 @@ namespace cg
 
 	void RenderSurface::drawString(int x, int y, std::wstring_view str, CHAR_INFO color)
 	{
-		const size_t offset = y * m_width + x;
 		for (int i = 0; i < str.size(); ++i)
 		{
-			m_surface[offset + i] = color;
-			m_surface[offset + i].Char.UnicodeChar = str[i];
+			color.Char.UnicodeChar = str[i];
+			putCell(x + i, y, color);
 		}
 	}
 
@@ -213,14 +221,18 @@ namespace cg
 
 	void RenderSurface::drawStringAlpha(int x, int y, std::wstring_view str, CHAR_INFO color)
 	{
+		const size_t offset = y * m_surfaceSize.x + x;
+
 		for (int i = 0; i < str.size(); ++i)
 		{
-			size_t offset = y * m_width + x + i;
+			[[unlikely]]
+			if (!on_surface(x + i, y))
+				continue;
 
-			auto bgColor = getBgColor(m_surface[offset].Attributes);
+			auto bgColor = getBgColor(m_surface[offset + i].Attributes);
 			auto fgColor = getFgColor(color.Attributes);
 
-			m_surface[offset] = makeCharInfo(str[i], bgColor, fgColor);
+			m_surface[offset + i] = makeCharInfo(str[i], bgColor, fgColor);
 		}
 	}
 

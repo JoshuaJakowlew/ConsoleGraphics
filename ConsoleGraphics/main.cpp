@@ -1,21 +1,36 @@
-#include <iostream>
+ï»¿#include <iostream>
+#include <string>
+#include <chrono>
 
-#include "Console.h"
+#include "RenderConsole.h"
 
 int main()
 {
 	using namespace std;
-	cg::Console console{ {45u, 25u}, {16u, 16u} };
-	bool success = console.create();
+	const cg::Vec2u resolution{ 50u, 30u };
+	cg::RenderConsole console{ resolution, {16u, 16u} };
+	if (!console.create())
+		cerr << "Error: can't create console" << '\n';
 
-	auto color = cg::Color{ L' ', cg::Color::Blue, cg::Color::Red };
-	console.fill(color);
+	wstring fps;
+	while (true)
+	{
+		auto start = chrono::system_clock::now();
 
-	console.drawLine({ 2, 2 }, { 15, 15 }, cg::Color{ L'#', cg::Color::Black, cg::Color::Red });
-	console.drawRect(10, 10, 10, 10, cg::Color{ L'#', cg::Color::Cyan, cg::Color::White });
-	console.drawString(12, 12, L"Fuck Microsoft", cg::Color{ L'#', cg::Color::Black, cg::Color::Red });
-	console.drawStringAlpha(15, 17, L"ß, á*ÿòü, âàñ íåíàâèæó", cg::Color{ L'#', cg::Color::Black, cg::Color::Red });
+		console.drawLine(-1, -1, 99, 99, cg::Color{ L'#', (uint16_t)0xCF });
+		console.drawRect(-5, -5, 20, 30, cg::Color{ L'#', (uint16_t)0xAF });
+		console.fillRect(49, 29, -5, -5, cg::Color{ L'#', (uint16_t)0xC2 });
+		console.drawString(-2, 0, L"Hello, Microsoft", cg::Color{ L'#', (uint16_t)0xFA });
+		console.drawStringAlpha(-2, 15, L"Ð ÑƒÑÑÐºÐ¸Ð¹ Ñ‚ÐµÐºÑÑ‚", cg::Color{ L'#', (uint16_t)0xFA });
+		console.drawStringAlpha(37, 6, L"á¿ºá¿·â‚¥á»œáµºÔ½", CHAR_INFO{ L'#', short(0x1234) });
 
-	console.display();
-	Sleep(100000);
+		console.drawString(0, resolution.y - 1, fps, cg::Color{ '#', cg::Color::DarkBlue, cg::Color::White });
+
+		if (!console.display())
+			cerr << "Error: can't display console" << '\n';
+
+		auto end = chrono::system_clock::now();
+		auto elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
+		fps = L"Fps: " + to_wstring(1'000'000 / elapsed) + L", Frame time: " + to_wstring(elapsed / 1000.f) + L"ms";
+	}
 }

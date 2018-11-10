@@ -62,9 +62,13 @@ namespace cg
 		void fill(Color color);
 		void fill(CHAR_INFO color);
 	private:
-		unsigned m_width;
-		unsigned m_height;
+		Vec2u m_surfaceSize;
 		std::vector<CHAR_INFO> m_surface;
+
+		constexpr void clamp(int& x0, int& y0 , int& x1, int& y1);
+		constexpr void clamp(int& x, int& y);
+
+		constexpr bool on_surface(int x, int y);
 	};
 } // namespace cg
 
@@ -72,7 +76,7 @@ namespace cg
 {
 	inline Vec2u RenderSurface::getSize() const noexcept
 	{
-		return { m_width, m_height };
+		return m_surfaceSize;
 	}
 
 	inline CHAR_INFO& RenderSurface::getCell(Vec2i coords)
@@ -80,20 +84,20 @@ namespace cg
 		assert(
 			coords.x >= 0 &&
 			coords.y >= 0 &&
-			coords.x < static_cast<long long>(m_width) &&
-			coords.y < static_cast<long long>(m_height)
+			coords.x < static_cast<long long>(m_surfaceSize.x) &&
+			coords.y < static_cast<long long>(m_surfaceSize.y)
 		);
-		return m_surface[m_width * coords.y + coords.x];
+		return m_surface[m_surfaceSize.x * coords.y + coords.x];
 	}
 
 	CHAR_INFO * RenderSurface::getLine(int line)
 	{
 		assert(
 			line >= 0 &&
-			line < static_cast<long long>(m_height)
+			line < static_cast<long long>(m_surfaceSize.y)
 		);
-		assert(&m_surface[m_width * line] != nullptr);
-		return &m_surface[m_width * line];
+		assert(&m_surface[m_surfaceSize.x * line] != nullptr);
+		return &m_surface[m_surfaceSize.x * line];
 	}
 
 	CHAR_INFO * RenderSurface::getBuffer()
@@ -101,6 +105,30 @@ namespace cg
 		assert(&m_surface[0] != nullptr);
 		return &m_surface[0];
 	}
+
+	constexpr void RenderSurface::clamp(int & x0, int & y0, int & x1, int & y1)
+	{
+		x0 = std::clamp(x0, 0, static_cast<int>(m_surfaceSize.x) - 1);
+		y0 = std::clamp(y0, 0, static_cast<int>(m_surfaceSize.y) - 1);
+		x1 = std::clamp(x1, 0, static_cast<int>(m_surfaceSize.x) - 1);
+		y1 = std::clamp(y1, 0, static_cast<int>(m_surfaceSize.y) - 1);
+	}
+
+	constexpr void cg::RenderSurface::clamp(int & x, int & y)
+	{
+		x = std::clamp(x, 0, static_cast<int>(m_surfaceSize.x) - 1);
+		y = std::clamp(y, 0, static_cast<int>(m_surfaceSize.y) - 1);
+	}
+
+	constexpr bool cg::RenderSurface::on_surface(int x, int y)
+	{
+		return 
+			x >= 0 &&
+			y >= 0 &&
+			x < static_cast<int>(m_surfaceSize.x) &&
+			y < static_cast<int>(m_surfaceSize.y);
+	}
+
 } // namespace cg
 
 #endif
