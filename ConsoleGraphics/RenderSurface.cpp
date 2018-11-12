@@ -236,6 +236,19 @@ namespace cg
 		}
 	}
 
+	void RenderSurface::drawSprite(const Sprite & sprite)
+	{
+		for (unsigned y = 0; y < sprite.getSize().y; ++y)
+		{
+			for (unsigned x = 0; x < sprite.getSize().x; ++x)
+			{
+				auto pos = sprite.getPos() + Vec2i{static_cast<int>(x), static_cast<int>(y)};
+				auto cellptr = sprite.m_data + (y * sprite.getSize().x + x);
+				putCell(pos, *cellptr);
+			}
+		}
+	}
+
 	void RenderSurface::fill(Color color)
 	{
 		fill(color.toCharInfo());

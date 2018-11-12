@@ -10,6 +10,7 @@
 #include "Vec2.h"
 #include "Rect.h"
 #include "Color.h"
+#include "Sprite.h"
 
 namespace cg
 {
@@ -58,6 +59,8 @@ namespace cg
 		void drawStringAlpha(int x, int y, std::wstring_view str, Color color);
 		void drawStringAlpha(Vec2i coords, std::wstring_view str, CHAR_INFO color);
 		void drawStringAlpha(int x, int y, std::wstring_view str, CHAR_INFO color);
+
+		void drawSprite(const Sprite& sprite);
 
 		void fill(Color color);
 		void fill(CHAR_INFO color);

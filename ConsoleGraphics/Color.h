@@ -9,7 +9,7 @@ namespace cg
 {
 	struct Color
 	{
-		enum Palette : uint32_t
+		enum Palette : uint16_t
 		{
 			Black = 0x0000,
 			DarkBlue = 0x0001,
@@ -19,7 +19,7 @@ namespace cg
 			DarkMagenta = 0x0005,
 			DarkYellow = 0x0006,
 			Gray = 0x0007, // Thanks, MS
-			DarkGrey = 0x0008,
+			DarkGray = 0x0008,
 			Blue = 0x0009,
 			Green = 0x000A,
 			Cyan = 0x000B,
@@ -29,48 +29,69 @@ namespace cg
 			White = 0x000F
 		};
 
-		Color() noexcept;
-		Color(CHAR_INFO color) noexcept;
-		Color(wchar_t glyph, uint16_t color) noexcept;
-		Color(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept;
+		constexpr Color() noexcept;
+		constexpr Color(CHAR_INFO color) noexcept;
+		constexpr Color(wchar_t glyph, uint16_t color) noexcept;
+		constexpr Color(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept;
 
-		[[nodiscard]] inline CHAR_INFO toCharInfo() const noexcept;
+		[[nodiscard]] constexpr auto toCharInfo() const noexcept -> CHAR_INFO;
 
 		wchar_t glyph;
 		uint16_t bgColor;
 		uint16_t fgColor;
 	};
 
-	inline CHAR_INFO Color::toCharInfo() const noexcept
+	[[nodiscard]] constexpr auto makeCharInfo(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept -> CHAR_INFO
 	{
-		CHAR_INFO ci;
-		ci.Char.UnicodeChar = glyph;
-		ci.Attributes = fgColor | bgColor;
-		return ci;
+		return { glyph, static_cast<WORD>(fgColor | bgColor << 4) };
 	}
 
-	[[nodiscard]] inline CHAR_INFO makeCharInfo(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept
-	{
-		CHAR_INFO ci;
-		ci.Char.UnicodeChar = glyph;
-		ci.Attributes = fgColor | bgColor << 4;
-		return ci;
-	}
-
-	[[nodiscard]] inline uint16_t combine(uint16_t bgColor, uint16_t fgColor) noexcept
+	[[nodiscard]] constexpr auto combine(uint16_t bgColor, uint16_t fgColor) noexcept -> uint16_t
 	{
 		return (bgColor << 4) | fgColor;
 	}
 
-	[[nodiscard]] inline uint16_t getBgColor(uint16_t color) noexcept
+	[[nodiscard]] constexpr auto getBgColor(uint16_t color) noexcept -> uint16_t
 	{
 		return color >> 4;
 	}
 
-	[[nodiscard]] inline uint16_t getFgColor(uint16_t color) noexcept
+	[[nodiscard]] constexpr auto getFgColor(uint16_t color) noexcept -> uint16_t
 	{
 		return color & 0xF;
 	}
+
+	constexpr Color::Color() noexcept :
+		Color(L' ', 0, 0)
+	{}	
+	
+	constexpr Color::Color(CHAR_INFO color) noexcept :
+		Color(
+			color.Char.UnicodeChar,
+			getBgColor(color.Attributes),
+			getFgColor(color.Attributes)
+		)
+	{}	
+	
+	constexpr Color::Color(wchar_t glyph, uint16_t color) noexcept :
+		Color(
+			glyph,
+			getBgColor(color),
+			getFgColor(color)
+		)
+	{}	
+	
+	constexpr Color::Color(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept :
+		glyph(glyph),
+		bgColor(bgColor << 4),
+		fgColor(fgColor)
+	{}
+
+	constexpr auto Color::toCharInfo() const noexcept -> CHAR_INFO
+	{
+		return { glyph, static_cast<WORD>(fgColor | bgColor) };
+	}
+
 } // namespace cg
 
 #endif

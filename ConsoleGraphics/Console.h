@@ -49,7 +49,6 @@ namespace cg
 
 } // namespace cg
 
-
 namespace cg
 {
 	template <typename T>
@@ -106,7 +105,7 @@ namespace cg
 	template <typename T>
 	bool Console<T>::display() noexcept
 	{
-		static_assert(std::is_same_v<T, decltype(*this)>);
+		static_assert(std::is_same_v<T*, decltype(this)>);
 		static_cast<T*>(this)->display();
 	}
 

@@ -17,6 +17,7 @@ namespace cg
 		
 		[[nodiscard]] bool display() noexcept;
 	};
+
 } // namespace cg
 
 #endif
