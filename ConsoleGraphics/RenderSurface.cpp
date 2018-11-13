@@ -30,7 +30,7 @@ namespace cg
 
 	void RenderSurface::putCell(int x, int y, CHAR_INFO color)
 	{
-		[[unliekly]]
+		[[unlikely]]
 		if (!on_surface(x, y))
 			return;
 
@@ -240,11 +240,14 @@ namespace cg
 	{
 		for (unsigned y = 0; y < sprite.getSize().y; ++y)
 		{
+			const auto line_offset = sprite.m_data + y * sprite.getSize().x;
 			for (unsigned x = 0; x < sprite.getSize().x; ++x)
 			{
-				auto pos = sprite.getPos() + Vec2i{static_cast<int>(x), static_cast<int>(y)};
-				auto cellptr = sprite.m_data + (y * sprite.getSize().x + x);
-				putCell(pos, *cellptr);
+				//const auto pos = sprite.getPos() + Vec2i{static_cast<int>(x), static_cast<int>(y)};
+				const auto xPos = sprite.getPos().x + x;
+				const auto yPos = sprite.getPos().y + y;
+				const auto cellptr = line_offset + x;
+				putCell(xPos, yPos, *cellptr);
 			}
 		}
 	}
@@ -256,8 +259,8 @@ namespace cg
 
 	void RenderSurface::fill(CHAR_INFO color)
 	{
-		for (int i = 0; i < m_surface.size(); ++i)
-			m_surface[i] = color;
+		//m_surface.assign(m_surface.size(), color);
+		std::fill(m_surface.begin(), m_surface.end(), color);
 	}
 
 } // namespace cg

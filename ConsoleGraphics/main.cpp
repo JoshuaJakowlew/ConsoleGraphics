@@ -32,16 +32,18 @@ int main()
 	if (!console.create())
 		MessageBoxA(0, "Error: can't create console", "Error", MB_ICONERROR);
 
-	wstring fps;
+	/*wstring fps;
 	wstring screenInfo = L"Resolution: " + to_wstring(resolution.x) + L'x' + to_wstring(resolution.y) +
 		L", Font size: " + to_wstring(fontSize.x) + L'x' + to_wstring(fontSize.y);
 	wstring minmaxFps;
 	int minfpsf = INT_MAX;
-	int maxfpsf = INT_MIN;
-	size_t counter = 0;
+	int maxfpsf = INT_MIN;*/
+
+	int counter = 0;
+	auto start = chrono::system_clock::now();
 	while (true)
 	{
-		auto start = chrono::system_clock::now();
+		//auto start = chrono::system_clock::now();
 
 		console.fill(CHAR_INFO{ L' ', 0x00 });
 
@@ -54,10 +56,10 @@ int main()
 
 		//Sleep(10);
 
-		console.drawString(0, resolution.y - 4, screenInfo, cg::Color{ '#', cg::Color::DarkBlue, cg::Color::White });
+		/*console.drawString(0, resolution.y - 4, screenInfo, cg::Color{ '#', cg::Color::DarkBlue, cg::Color::White });
 		console.drawString(0, resolution.y - 3, fps, cg::Color{ '#', cg::Color::DarkBlue, cg::Color::White });
 		console.drawString(0, resolution.y - 2, minmaxFps, cg::Color{ '#', cg::Color::DarkBlue, cg::Color::White });
-		console.drawString(0, resolution.y - 1, L"Frame #" + to_wstring(counter++), cg::Color{ '#', cg::Color::DarkBlue, cg::Color::White });
+		console.drawString(0, resolution.y - 1, L"Frame #" + to_wstring(counter++), cg::Color{ '#', cg::Color::DarkBlue, cg::Color::White });*/
 
 		if (!console.display())
 		{
@@ -66,9 +68,11 @@ int main()
 		}
 
 		auto end = chrono::system_clock::now();
-		auto elapsed = chrono::duration_cast<chrono::microseconds>(end - start).count();
+		auto elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+		++counter;
+		if (elapsed >= 30 * 1000) break;
 		
-		int fpsf = 1'000'000 / elapsed;
+		/*int fpsf = 1'000'000 / elapsed;
 
 		if (fpsf < minfpsf) minfpsf = fpsf;
 		if (fpsf > maxfpsf) maxfpsf = fpsf;
@@ -76,6 +80,8 @@ int main()
 		fps = L"Fps: " + to_wstring(fpsf) +
 			L", Frame time: " + to_wstring(elapsed / 1000.f) + L"ms";
 		
-		minmaxFps = L"Max fps: " + to_wstring(maxfpsf) + L", min fps: " + to_wstring(minfpsf);
+		minmaxFps = L"Max fps: " + to_wstring(maxfpsf) + L", min fps: " + to_wstring(minfpsf);*/
 	}
+
+	return counter;
 }
