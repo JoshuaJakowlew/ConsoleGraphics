@@ -80,7 +80,7 @@ while(true)
 ```
 
 ### Installation
-VS2017 Solution id provided, do wtf you want with it :)
+VS2017 Solution is provided, do wtf you want with it :)
 
 ### Todos
  - Add full documentation
