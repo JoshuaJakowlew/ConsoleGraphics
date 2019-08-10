@@ -164,7 +164,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Rect.inl" />
-    <None Include="Vec2.inl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />

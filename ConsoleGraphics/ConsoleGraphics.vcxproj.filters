@@ -61,9 +61,6 @@
     <None Include="Rect.inl">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="Vec2.inl">
-      <Filter>Source Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt">

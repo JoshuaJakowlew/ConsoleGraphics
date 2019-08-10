@@ -1,15 +1,23 @@
-#pragma once
+#ifndef VEC2_H
+#define VEC2_H
 
 namespace cg
 {
 	template <typename T>
 	struct Vec2
 	{
-		Vec2() noexcept;
-		Vec2(T x, T y) noexcept;
+		constexpr Vec2() noexcept :
+			x{ 0 }, y{ 0 }
+		{};
+		constexpr Vec2(T x, T y) noexcept :
+			x{ x }, y{ y }
+		{}
 
 		template <typename U>
-		explicit Vec2(const Vec2<U>& vector) noexcept;
+		constexpr explicit Vec2(const Vec2<U>& vec) noexcept :
+			x{ static_cast<T>(vec.x) },
+			y{ static_cast<T>(vec.y) }
+		{}
 
 		T x;
 		T y;
@@ -17,55 +25,122 @@ namespace cg
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T> operator-(const Vec2<T>& right) noexcept;
+	constexpr auto operator-(const Vec2<T>& right) noexcept -> Vec2<T>
+	{
+		return {
+			-right.x,
+			-right.y
+		};
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T>& operator +=(Vec2<T>& left, const Vec2<T>& right) noexcept;
+	constexpr auto operator +=(Vec2<T>& left, const Vec2<T>& right) noexcept -> Vec2<T>&
+	{
+		left.x += right.x;
+		left.y += right.y;
+
+		return left;
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T>& operator -=(Vec2<T>& left, const Vec2<T>& right) noexcept;
+	constexpr auto operator -=(Vec2<T>& left, const Vec2<T>& right) noexcept -> Vec2<T>&
+	{
+		left.x -= right.x;
+		left.y -= right.y;
+
+		return left;
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T> operator +(const Vec2<T>& left, const Vec2<T>& right) noexcept;
+	constexpr auto operator +(const Vec2<T>& left, const Vec2<T>& right) noexcept -> Vec2<T>
+	{
+		return {
+			left.x + right.x,
+			left.y + right.y
+		};
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T> operator -(const Vec2<T>& left, const Vec2<T>& right) noexcept;
+	constexpr auto operator -(const Vec2<T>& left, const Vec2<T>& right) noexcept -> Vec2<T>
+	{
+		return {
+			left.x - right.x,
+			left.y - right.y
+		};
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T> operator *(const Vec2<T>& left, T right) noexcept;
+	constexpr auto operator *(const Vec2<T>& left, T right) noexcept -> Vec2<T>
+	{
+		return {
+			left.x * right,
+			left.y * right
+		};
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T> operator *(T left, const Vec2<T>& right) noexcept;
+	constexpr auto operator *(T left, const Vec2<T>& right) noexcept -> Vec2<T>
+	{
+		return {
+			right.x * left,
+			right.y * left
+		};
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T>& operator *=(Vec2<T>& left, T right) noexcept;
+	constexpr auto operator *=(Vec2<T>& left, T right) noexcept -> Vec2<T>&
+	{
+		left.x *= right;
+		left.y *= right;
+
+		return left;
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T> operator /(const Vec2<T>& left, T right) noexcept;
+	constexpr auto operator /(const Vec2<T>& left, T right) noexcept -> Vec2<T>
+	{
+		return {
+			left.x / right,
+			left.y / right
+		};
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline Vec2<T>& operator /=(Vec2<T>& left, T right) noexcept;
+	constexpr auto operator /=(Vec2<T>& left, T right) noexcept -> Vec2<T>&
+	{
+		left.x /= right;
+		left.y /= right;
+
+		return left;
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline bool operator ==(const Vec2<T>& left, const Vec2<T>& right) noexcept;
+	constexpr auto operator ==(const Vec2<T>& left, const Vec2<T>& right) noexcept -> bool
+	{
+		return (left.x == right.x) && (left.y == right.y);
+	}
 
 	template <typename T>
 	[[nodiscard]]
-	inline bool operator !=(const Vec2<T>& left, const Vec2<T>& right) noexcept;
+	constexpr auto operator !=(const Vec2<T>& left, const Vec2<T>& right) noexcept -> bool
+	{
+		return (left.x != right.x) || (left.y != right.y);
+	}
 
-	typedef Vec2<int>			Vec2i;
-	typedef Vec2<unsigned int>	Vec2u;
-	typedef Vec2<float>			Vec2f;
+	using Vec2i = Vec2<int>;
+	using Vec2u = Vec2<unsigned int>;
+	using Vec2f = Vec2<float>;
+
 } // namespace cg
 
-#include "Vec2.inl"
+#endif
