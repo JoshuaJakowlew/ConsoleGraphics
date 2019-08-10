@@ -10,7 +10,7 @@ int main()
 	using namespace std;
 
 	srand(time(nullptr));
-
+	MessageBoxA(0, 0, 0, 0);
 	vector<rgb_t> palette{
 		{0, 0, 0}, {0, 0, 128}, {0, 128, 0}, {0, 128, 128},
 		{128, 0, 0}, {128, 0, 128}, {128, 128, 0}, {192, 192, 192},
