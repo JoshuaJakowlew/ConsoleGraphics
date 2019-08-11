@@ -13,50 +13,23 @@ namespace cg
 		m_surface.shrink_to_fit();
 	}
 
-	void RenderSurface::putCell(Vec2i coords, Color color)
+	auto RenderSurface::putCellUnsafe(int x, int y, CHAR_INFO color) -> void
 	{
-		putCell(coords.x, coords.y, color.toCharInfo());
+		const auto pos = y * m_surfaceSize.x + x;
+		m_surface[pos] = color;
 	}
 
-	void RenderSurface::putCell(int x, int y, Color color)
-	{
-		putCell(x, y, color.toCharInfo());
-	}
-
-	void RenderSurface::putCell(Vec2i coords, CHAR_INFO color)
-	{
-		putCell(coords.x, coords.y, color);
-	}
-
-	void RenderSurface::putCell(int x, int y, CHAR_INFO color)
+	auto RenderSurface::putCell(int x, int y, CHAR_INFO color) -> void
 	{
 		[[unlikely]]
 		if (!on_surface(x, y))
 			return;
 
-		size_t pos = y * m_surfaceSize.x + x;
-		m_surface[pos] = color;
+		putCellUnsafe(x, y, color);
 	}
 
-	void RenderSurface::drawLine(Vec2i startPos, Vec2i endPos, Color color)
+	auto RenderSurface::drawLine(int x0, int y0, int x1, int y1, CHAR_INFO color) -> void
 	{
-		drawLine(startPos.x, startPos.y, endPos.x, endPos.y, color.toCharInfo());
-	}
-
-	void RenderSurface::drawLine(int x0, int y0, int x1, int y1, Color color)
-	{
-		drawLine(x0, y0, x1, y1, color.toCharInfo());
-	}
-
-	void RenderSurface::drawLine(Vec2i startPos, Vec2i endPos, CHAR_INFO color)
-	{
-		drawLine(startPos.x, startPos.y, endPos.x, endPos.y, color);
-	}
-
-	void RenderSurface::drawLine(int x0, int y0, int x1, int y1, CHAR_INFO color)
-	{
-		//clamp(x0, y0, x1, y1);
-
 		bool steep = false;
 		if (std::abs(x0 - x1) < std::abs(y0 - y1))
 		{
@@ -91,40 +64,13 @@ namespace cg
 		}
 	}
 
-	void RenderSurface::drawRect(const IntRect& rect, Color color)
-	{
-		drawRect(rect.x, rect.y, rect.width, rect.height, color.toCharInfo());
-	}
-
-	void RenderSurface::drawRect(Vec2i coords, Vec2i size, Color color)
-	{
-		drawRect(coords.x, coords.y, size.x, size.y, color.toCharInfo());
-	}
-
-	void RenderSurface::drawRect(int x, int y, int width, int height, Color color)
-	{
-		drawRect(x, y, width, height, color.toCharInfo());
-	}
-
-	void RenderSurface::drawRect(const IntRect& rect, CHAR_INFO color)
-	{
-		drawRect(rect.x, rect.y, rect.width, rect.height, color);
-	}
-
-	void RenderSurface::drawRect(Vec2i coords, Vec2i size, CHAR_INFO color)
-	{
-		drawRect(coords.x, coords.y, size.x, size.y, color);
-	}
-
-	void RenderSurface::drawRect(int x, int y, int width, int height, CHAR_INFO color)
+	auto RenderSurface::drawRect(int x, int y, int width, int height, CHAR_INFO color) -> void
 	{
 		if (width > 0) width = width - 1;
 		if (height > 0) height = height - 1;
 
 		if (width < 0) width = width + 1;
-		if (height < 0) height = height + 1;
-
-		
+		if (height < 0) height = height + 1;	
 
 		drawLine(x, y, x + width, y, color);
 		drawLine(x + width, y, x + width, y + height, color);
@@ -132,32 +78,7 @@ namespace cg
 		drawLine(x, y + height, x, y, color);
 	}
 
-	void RenderSurface::fillRect(const IntRect& rect, Color color)
-	{
-		fillRect(rect.x, rect.y, rect.width, rect.height, color.toCharInfo());
-	}
-
-	void RenderSurface::fillRect(Vec2i coords, Vec2i size, Color color)
-	{
-		fillRect(coords.x, coords.y, size.x, size.y, color.toCharInfo());
-	}
-
-	void RenderSurface::fillRect(int x, int y, int width, int height, Color color)
-	{
-		fillRect(x, y, width, height, color.toCharInfo());
-	}
-
-	void RenderSurface::fillRect(const IntRect& rect, CHAR_INFO color)
-	{
-		fillRect(rect.x, rect.y, rect.width, rect.height, color);
-	}
-
-	void RenderSurface::fillRect(Vec2i coords, Vec2i size, CHAR_INFO color)
-	{
-		fillRect(coords.x, coords.y, size.x, size.y, color);
-	}
-
-	void RenderSurface::fillRect(int x, int y, int width, int height, CHAR_INFO color)
+	auto RenderSurface::fillRect(int x, int y, int width, int height, CHAR_INFO color) -> void
 	{
 		if (width < 0)
 		{
@@ -180,55 +101,27 @@ namespace cg
 		}
 	}
 
-	void RenderSurface::drawString(Vec2i coords, std::wstring_view str, Color color)
+	auto RenderSurface::drawString(int x, int y, std::wstring_view str, CHAR_INFO color) -> void
 	{
-		drawString(coords.x, coords.y, str, color.toCharInfo());
-	}
+		int endX = x + str.length();
+		clamp(x, y, endX, y);
 
-	void RenderSurface::drawString(int x, int y, std::wstring_view str, Color color)
-	{
-		drawString(x, y, str, color.toCharInfo());
-	}
-
-	void RenderSurface::drawString(Vec2i coords, std::wstring_view str, CHAR_INFO color)
-	{
-		drawString(coords.x, coords.y, str, color);
-	}
-
-	void RenderSurface::drawString(int x, int y, std::wstring_view str, CHAR_INFO color)
-	{
-		for (int i = 0; i < str.size(); ++i)
+		for (int i = x; i <= endX; ++i)
 		{
-			color.Char.UnicodeChar = str[i];
-			putCell(x + i, y, color);
+			color.Char.UnicodeChar = str[i - x];
+			putCellUnsafe(i, y, color);
 		}
 	}
 
-	void RenderSurface::drawStringAlpha(Vec2i coords, std::wstring_view str, Color color)
-	{
-		drawStringAlpha(coords.x, coords.y, str, color.toCharInfo());
-	}
-
-	void RenderSurface::drawStringAlpha(int x, int y, std::wstring_view str, Color color)
-	{
-		drawStringAlpha(x, y, str, color.toCharInfo());
-	}
-
-	void RenderSurface::drawStringAlpha(Vec2i coords, std::wstring_view str, CHAR_INFO color)
-	{
-		drawStringAlpha(coords.x, coords.y, str, color);
-	}
-
-	void RenderSurface::drawStringAlpha(int x, int y, std::wstring_view str, CHAR_INFO color)
+	auto RenderSurface::drawStringAlpha(int x, int y, std::wstring_view str, CHAR_INFO color) -> void
 	{
 		const size_t offset = y * m_surfaceSize.x + x;
 
-		for (int i = 0; i < str.size(); ++i)
-		{
-			[[unlikely]]
-			if (!on_surface(x + i, y))
-				continue;
+		int endX = x + str.length();
+		clamp(x, y, endX, y);
 
+		for (int i = 0; i <= endX - x; ++i)
+		{
 			auto bgColor = getBgColor(m_surface[offset + i].Attributes);
 			auto fgColor = getFgColor(color.Attributes);
 
@@ -236,30 +129,27 @@ namespace cg
 		}
 	}
 
-	void RenderSurface::drawSprite(const Sprite & sprite)
+	auto RenderSurface::drawSprite(const Sprite & sprite) -> void
 	{
-		for (unsigned y = 0; y < sprite.getSize().y; ++y)
+		auto left = sprite.getPos();
+		auto right = sprite.getPos() + sprite.getSize();
+		
+		clamp(left.x, right.y);
+		clamp(right.x, right.y);
+
+		for (auto y = left.y; y <= right.y; ++y)
 		{
-			const auto line_offset = sprite.m_data + y * sprite.getSize().x;
-			for (unsigned x = 0; x < sprite.getSize().x; ++x)
-			{
-				//const auto pos = sprite.getPos() + Vec2i{static_cast<int>(x), static_cast<int>(y)};
-				const auto xPos = sprite.getPos().x + x;
-				const auto yPos = sprite.getPos().y + y;
-				const auto cellptr = line_offset + x;
-				putCell(xPos, yPos, *cellptr);
-			}
+			const std::uintptr_t offset = y * sprite.getSize().x;
+			const auto srcLine = sprite.m_data + offset;
+			const auto dstLine = &m_surface[0] + offset + left.x;
+			const auto size = (right.x - left.x + 1) * sizeof(CHAR_INFO);
+
+			std::memcpy(dstLine, srcLine, size);
 		}
 	}
 
-	void RenderSurface::fill(Color color)
+	auto RenderSurface::fill(CHAR_INFO color) -> void
 	{
-		fill(color.toCharInfo());
-	}
-
-	void RenderSurface::fill(CHAR_INFO color)
-	{
-		//m_surface.assign(m_surface.size(), color);
 		std::fill(m_surface.begin(), m_surface.end(), color);
 	}
 

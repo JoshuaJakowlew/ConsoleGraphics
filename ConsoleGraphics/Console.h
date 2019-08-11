@@ -169,7 +169,7 @@ namespace cg
 		if (!::SetConsoleMode(m_handles.out, dwMode))
 			return false;*/
 
-			// Enable UTC-16 (not UTF-8, thanks, MS)
+		// Enable unicode
 		[[unlikely]]
 		if (!::SetConsoleOutputCP(CP_UTF8))
 			return false;
