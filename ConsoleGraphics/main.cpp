@@ -18,15 +18,15 @@ int main()
 	};
 
 	cg::Texture tex(std::move(palette));
-	tex.loadFromBitmap("image.bmp");
+	tex.loadFromBitmap("image-half.bmp");
 
 	cg::Sprite sprite{ tex };
-	sprite.setPos({0, 0 });
+	sprite.setPos({25, 25 });
 	sprite.setOrigin(cg::Vec2i(sprite.getSize().x / 2, sprite.getSize().y / 2));
 	
-	const cg::Vec2u resolution = { tex.getSize().x, tex.getSize().y };
-	const cg::Vec2u fontSize{ 2u, 2u };
-	cg::RenderConsole console{ resolution, fontSize };
+	constexpr cg::Vec2u resolution = { 200, 100 };
+	const cg::Vec2u fontSize{ 4u, 4u };
+	cg::RenderConsole<resolution.x, resolution.y> console{ resolution, fontSize };
 
 	if (!console.create())
 		MessageBoxA(0, "Error: can't create console", "Error", MB_ICONERROR);

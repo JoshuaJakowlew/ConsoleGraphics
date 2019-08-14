@@ -9,13 +9,12 @@ namespace cg
 	class Sprite
 	{
 	public:
-		friend class RenderSurface;
-
 		Sprite(const Texture& texture) noexcept;
 
 		inline auto getPos() const noexcept -> Vec2i;
 		inline auto getSize() const noexcept -> Vec2i;
 		inline auto getOrigin() const noexcept -> Vec2i;
+		inline auto getData() const noexcept -> const CHAR_INFO*;
 
 		inline auto setPos(Vec2i pos) noexcept -> void;
 		inline auto setOrigin(Vec2i origin) noexcept -> void;
@@ -46,6 +45,11 @@ namespace cg
 	inline auto Sprite::getOrigin() const noexcept -> Vec2i
 	{
 		return m_origin;
+	}
+
+	inline auto Sprite::getData() const noexcept -> const CHAR_INFO*
+	{
+		return m_data;
 	}
 
 	inline auto Sprite::setPos(Vec2i pos) noexcept -> void

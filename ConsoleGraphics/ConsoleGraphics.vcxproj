@@ -150,7 +150,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="RenderConsole.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="RenderSurface.cpp" />
     <ClCompile Include="Texture.cpp" />
