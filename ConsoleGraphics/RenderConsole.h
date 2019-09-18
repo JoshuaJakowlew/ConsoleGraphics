@@ -8,10 +8,9 @@
 
 namespace cg
 {
-	template <size_t W, size_t H>
 	class RenderConsole :
-		public Console<RenderConsole<W, H>>,
-		public RenderSurface<W, H>
+		public Console<RenderConsole>,
+		public RenderSurface
 	{
 	public:
 		explicit RenderConsole(Vec2u resolution, Vec2u font_size);
@@ -21,14 +20,12 @@ namespace cg
 		[[nodiscard]] bool display() noexcept;
 	};
 
-	template<size_t W, size_t H>
-	inline RenderConsole<W, H>::RenderConsole(Vec2u resolution, Vec2u font_size) :
-		Console<RenderConsole>(resolution, font_size),
-		RenderSurface<W, H>(resolution)
+	inline RenderConsole::RenderConsole(Vec2u resolution, Vec2u font_size) :
+		Console<RenderConsole>{ resolution, font_size },
+		RenderSurface{ resolution }
 	{}
 
-	template<size_t W, size_t H>
-	inline bool RenderConsole<W, H>::display() noexcept
+	inline bool RenderConsole::display() noexcept
 	{
 		assert(m_resolution.x <= SHRT_MAX - 1 && m_resolution.y <= SHRT_MAX - 1);
 

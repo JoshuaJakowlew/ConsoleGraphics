@@ -62,29 +62,29 @@ namespace cg
 	}
 
 	constexpr Color::Color() noexcept :
-		Color(L' ', 0, 0)
+		Color{ L' ', 0, 0 }
 	{}	
 	
 	constexpr Color::Color(CHAR_INFO color) noexcept :
-		Color(
+		Color{
 			color.Char.UnicodeChar,
 			getBgColor(color.Attributes),
 			getFgColor(color.Attributes)
-		)
+		}
 	{}	
 	
 	constexpr Color::Color(wchar_t glyph, uint16_t color) noexcept :
-		Color(
+		Color{
 			glyph,
 			getBgColor(color),
 			getFgColor(color)
-		)
+		}
 	{}	
 	
 	constexpr Color::Color(wchar_t glyph, uint16_t bgColor, uint16_t fgColor) noexcept :
-		glyph(glyph),
-		bgColor(bgColor << 4),
-		fgColor(fgColor)
+		glyph{ glyph },
+		bgColor{ static_cast<uint16_t>(bgColor << 4) },
+		fgColor{ fgColor }
 	{}
 
 	constexpr auto Color::toCharInfo() const noexcept -> CHAR_INFO

@@ -26,7 +26,7 @@ int main()
 	
 	constexpr cg::Vec2u resolution = { 200, 100 };
 	const cg::Vec2u fontSize{ 4u, 4u };
-	cg::RenderConsole<resolution.x, resolution.y> console{ resolution, fontSize };
+	cg::RenderConsole console{ resolution, fontSize };
 
 	if (!console.create())
 		MessageBoxA(0, "Error: can't create console", "Error", MB_ICONERROR);

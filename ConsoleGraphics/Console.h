@@ -65,8 +65,8 @@ namespace cg
 
 	template <typename T>
 	Console<T>::Console(Vec2u resolution, Vec2u font_size) :
-		m_resolution(resolution),
-		m_fontSize(font_size)
+		m_resolution{ resolution },
+		m_fontSize{ font_size }
 	{}
 
 	template <typename T>
