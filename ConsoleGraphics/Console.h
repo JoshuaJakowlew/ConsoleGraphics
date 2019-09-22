@@ -1,6 +1,7 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
+#include <array>
 #include <type_traits>
 #include <cassert>
 
@@ -13,10 +14,23 @@ namespace cg
 	template <typename T>
 	class Console
 	{
+    public:
+		static constexpr auto paletteSize = 16ull;
+		using Palette = std::array<COLORREF, paletteSize>;
+
+		static constexpr Palette defaultPalette{
+			RGB(0, 0, 0), RGB(0, 0, 128), RGB(0, 128, 0), RGB(0, 128, 128),
+			RGB(128, 0, 0), RGB(128, 0, 128), RGB(128, 128, 0), RGB(192, 192, 192),
+			RGB(128, 128, 128), RGB(0, 0, 255), RGB(0, 255, 0), RGB(0, 255, 255),
+			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
+		};
+
 	public:
-		explicit Console(Vec2u resolution, Vec2u font_size);
+		explicit Console(Vec2u resolution, Vec2u font_size) noexcept;
+
 		Console(const Console&) = delete;
 		Console& operator=(const Console&) = delete;
+		
 		~Console() noexcept;
 
 		[[nodiscard]] bool create() noexcept;
@@ -24,6 +38,9 @@ namespace cg
 
 		[[nodiscard]] inline Vec2u getResolution() const noexcept;
 		[[nodiscard]] inline Vec2u getMaxResolution() const noexcept;
+		
+		[[nodiscard]] bool setPalette(const Palette& palette) noexcept;
+
 	protected:
 		struct Handles
 		{
@@ -38,13 +55,16 @@ namespace cg
 		Vec2u m_maxResolution;
 		Vec2u m_fontSize;
 
-		[[nodiscard]] Vec2u getMaxScreenBufferSize();
-		[[nodiscard]] bool getStdHandles();
-		[[nodiscard]] bool createScreenBuffer();
-		[[nodiscard]] bool configureOutput();
-		[[nodiscard]] bool assignScreenBuffer();
-		[[nodiscard]] bool disableCursor();
-		[[nodiscard]] bool setFontSize(Vec2u fontSize);
+		Palette m_palette;
+
+	protected:
+		[[nodiscard]] Vec2u getMaxScreenBufferSize() noexcept;
+		[[nodiscard]] bool getStdHandles() noexcept;
+		[[nodiscard]] bool createScreenBuffer() noexcept;
+		[[nodiscard]] bool configureOutput() noexcept;
+		[[nodiscard]] bool assignScreenBuffer() noexcept;
+		[[nodiscard]] bool disableCursor() noexcept;
+		[[nodiscard]] bool setFontSize(Vec2u fontSize) noexcept;
 	};
 
 } // namespace cg
@@ -63,8 +83,20 @@ namespace cg
 		return m_maxResolution;
 	}
 
+	template<typename T>
+	bool Console<T>::setPalette(const Palette& palette) noexcept
+	{
+		CONSOLE_SCREEN_BUFFER_INFOEX csbi;
+		csbi.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
+		if (!::GetConsoleScreenBufferInfoEx(m_handles.out, &csbi))
+			return false;
+
+		std::copy(std::begin(palette), std::end(palette), std::begin(csbi.ColorTable));
+		return ::SetConsoleScreenBufferInfoEx(m_handles.out, &csbi);
+	}
+
 	template <typename T>
-	Console<T>::Console(Vec2u resolution, Vec2u font_size) :
+	Console<T>::Console(Vec2u resolution, Vec2u font_size) noexcept :
 		m_resolution{ resolution },
 		m_fontSize{ font_size }
 	{}
@@ -99,6 +131,10 @@ namespace cg
 		if (!disableCursor())
 			return false;
 
+		[[unlikely]]
+		if (!setPalette(defaultPalette))
+			return false;
+
 		return true; // Everithing is OK
 	}
 
@@ -110,7 +146,7 @@ namespace cg
 	}
 
 	template <typename T>
-	Vec2u Console<T>::getMaxScreenBufferSize()
+	Vec2u Console<T>::getMaxScreenBufferSize() noexcept
 	{
 		assert(m_handles.out != INVALID_HANDLE_VALUE);
 
@@ -119,11 +155,14 @@ namespace cg
 		if (!::GetConsoleScreenBufferInfo(m_handles.out, &csbi))
 			return { 0, 0 };
 
-		return Vec2u(csbi.dwMaximumWindowSize.X, csbi.dwMaximumWindowSize.Y);
+		return {
+			static_cast<unsigned>(csbi.dwMaximumWindowSize.X),
+			static_cast<unsigned>(csbi.dwMaximumWindowSize.Y)
+		};
 	}
 
 	template <typename T>
-	bool Console<T>::getStdHandles()
+	bool Console<T>::getStdHandles() noexcept
 	{
 		auto original_handle = ::GetStdHandle(STD_OUTPUT_HANDLE);
 		auto input_handle = ::GetStdHandle(STD_INPUT_HANDLE);
@@ -139,7 +178,7 @@ namespace cg
 	}
 
 	template <typename T>
-	bool Console<T>::createScreenBuffer()
+	bool Console<T>::createScreenBuffer() noexcept
 	{
 		auto buffer_handle = ::CreateConsoleScreenBuffer(
 			GENERIC_READ | GENERIC_WRITE,
@@ -158,7 +197,7 @@ namespace cg
 	}
 
 	template <typename T>
-	bool Console<T>::configureOutput()
+	bool Console<T>::configureOutput() noexcept
 	{
 		// Enable ANSI escape codes
 		/*DWORD dwMode = 0;
@@ -178,7 +217,7 @@ namespace cg
 	}
 
 	template <typename T>
-	bool Console<T>::assignScreenBuffer()
+	bool Console<T>::assignScreenBuffer() noexcept
 	{
 		/*
 		*
@@ -203,7 +242,10 @@ namespace cg
 			return false;
 
 		// Extend screen buffer to given size
-		COORD bufferSize = { (SHORT)m_resolution.x, (SHORT)m_resolution.y };
+		COORD bufferSize = {
+			static_cast<SHORT>(m_resolution.x),
+			static_cast<SHORT>(m_resolution.y)
+		};
 		[[unlikely]]
 		if (!::SetConsoleScreenBufferSize(m_handles.out, bufferSize))
 			return false;
@@ -247,7 +289,7 @@ namespace cg
 	}
 
 	template <typename T>
-	bool Console<T>::disableCursor()
+	bool Console<T>::disableCursor() noexcept
 	{
 		CONSOLE_CURSOR_INFO cursor_info;
 		cursor_info.dwSize = 42;
@@ -258,7 +300,7 @@ namespace cg
 	}
 
 	template <typename T>
-	bool Console<T>::setFontSize(Vec2u fontSize)
+	bool Console<T>::setFontSize(Vec2u fontSize) noexcept
 	{
 		assert(fontSize.x <= SHRT_MAX && fontSize.y <= SHRT_MAX);
 

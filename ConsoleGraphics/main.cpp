@@ -17,6 +17,13 @@ int main()
 		{255, 0, 0}, {255, 0, 255}, {255, 255, 0}, {255, 255, 255}
 	};
 
+	cg::RenderConsole::Palette defaultPalette{
+			RGB(53, 14, 88), RGB(0, 0, 128), RGB(0, 128, 0), RGB(0, 128, 128),
+			RGB(128, 0, 0), RGB(128, 0, 128), RGB(128, 128, 0), RGB(192, 192, 192),
+			RGB(128, 128, 128), RGB(0, 0, 255), RGB(0, 255, 0), RGB(0, 255, 255),
+			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
+	};
+
 	cg::Texture tex(std::move(palette));
 	tex.loadFromBitmap("image-half.bmp");
 
@@ -30,6 +37,8 @@ int main()
 
 	if (!console.create())
 		MessageBoxA(0, "Error: can't create console", "Error", MB_ICONERROR);
+
+	console.setPalette(defaultPalette);
 
 	int counter = 0;
 	auto start = chrono::system_clock::now();

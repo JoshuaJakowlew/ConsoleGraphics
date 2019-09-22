@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RenderConsole.cpp" />
     <ClCompile Include="RenderSurface.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
