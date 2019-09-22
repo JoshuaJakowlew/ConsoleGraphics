@@ -85,7 +85,7 @@ VS2017 Solution is provided, do wtf you want with it :)
 ### Todos
  - Add full documentation
  - Add input handling
- - Add different console pallete change support
+ - ~~Add console pallete change support~~
  - Add different fonts support
  - Add several features in sprite rendering like rotating, stretching, scaling and so on
  - Optimize code and bring it to the one style
