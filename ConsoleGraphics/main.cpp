@@ -24,7 +24,7 @@ int main()
 			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
 	};
 
-	cg::Texture tex(std::move(palette));
+	cg::Texture tex(defaultPalette);
 	tex.loadFromBitmap("image-half.bmp");
 
 	cg::Sprite sprite{ tex };

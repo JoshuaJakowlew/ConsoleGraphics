@@ -2,8 +2,6 @@
 
 namespace cg
 {
-	
-
 	auto RenderSurface::drawLine(int x0, int y0, int x1, int y1, CHAR_INFO color) -> void
 	{
 		bool steep = false;

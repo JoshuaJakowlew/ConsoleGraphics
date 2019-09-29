@@ -2,9 +2,9 @@
 
 namespace cg
 {
-	void Texture::setPalette(const std::vector<rgb_t>& palette)
+	void Texture::setPalette(const std::array<COLORREF, 16>& palette)
 	{
-		m_palette = std::move(palette);
+		m_palette = convertToInternalPalette(palette);
 	}
 	
 	bool Texture::loadFromBitmap(std::string_view path)
@@ -23,6 +23,16 @@ namespace cg
 		{
 			m_data = std::move(local_data);
 		}
+	}
+
+	std::array<rgb_t, 16> Texture::convertToInternalPalette(std::array<COLORREF, 16> external)
+	{
+		auto internal = std::array<rgb_t, 16>{};
+		for (int i = 0; i < 16; ++i)
+		{
+			internal[i] = rgb_t{ GetRValue(external[i]), GetGValue(external[i]), GetBValue(external[i]) };
+		}
+		return internal;
 	}
 
 	bool Texture::convertBitmapToPalette(const bitmap_image& bitmap, std::vector<CHAR_INFO>& converted_data)
@@ -48,7 +58,6 @@ namespace cg
 
 	std::tuple<size_t, bool> Texture::convertColorToPalette(rgb_t color)
 	{
-		
 		color = find_nearest_color(color, m_palette.begin(), m_palette.end());
 		if (auto it = std::find(m_palette.begin(), m_palette.end(), color);
 			it != m_palette.end())

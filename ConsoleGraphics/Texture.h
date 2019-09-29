@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string_view>
 #include <vector>
+#include <array>
 #include <algorithm>
 #include <tuple>
 #include <cassert>
@@ -19,8 +20,8 @@ namespace cg
 	class Texture
 	{
 	public:
-		Texture(std::vector<rgb_t> palette) :
-			m_palette(std::move(palette))
+		Texture(std::array<COLORREF, 16> palette) :
+			m_palette(convertToInternalPalette(palette))
 		{}
 
 		[[nodiscard]] inline Vec2u getSize() const noexcept;
@@ -29,12 +30,14 @@ namespace cg
 		[[nodiscard]] inline const CHAR_INFO * getLine(int line);
 		[[nodiscard]] inline const CHAR_INFO * getBuffer() const;
 
-		void setPalette(const std::vector<rgb_t>& palette);
+		void setPalette(const std::array<COLORREF, 16>& palette);
 		[[nodiscard]] bool loadFromBitmap(std::string_view path);	
 	private:
-		std::vector<rgb_t> m_palette;
+		std::array<rgb_t, 16> m_palette;
 		mutable std::vector<CHAR_INFO> m_data;
 		Vec2u m_size;
+
+		[[nodiscard]] std::array<rgb_t, 16> convertToInternalPalette(std::array<COLORREF, 16> external);
 
 		[[nodiscard]] bool convertBitmapToPalette(const bitmap_image& bitmap, std::vector<CHAR_INFO>& converted_data);
 		[[nodiscard]] std::tuple<size_t, bool> convertColorToPalette(rgb_t color);
