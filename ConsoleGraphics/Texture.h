@@ -20,7 +20,7 @@ namespace cg
 	class Texture
 	{
 	public:
-		Texture(std::array<COLORREF, 16> palette) :
+		Texture(Palette palette) :
 			m_palette(convertToInternalPalette(palette))
 		{}
 
@@ -37,7 +37,7 @@ namespace cg
 		mutable std::vector<CHAR_INFO> m_data;
 		Vec2u m_size;
 
-		[[nodiscard]] std::array<rgb_t, 16> convertToInternalPalette(std::array<COLORREF, 16> external);
+		[[nodiscard]] std::array<rgb_t, 16> convertToInternalPalette(Palette external);
 
 		[[nodiscard]] bool convertBitmapToPalette(const bitmap_image& bitmap, std::vector<CHAR_INFO>& converted_data);
 		[[nodiscard]] std::tuple<size_t, bool> convertColorToPalette(rgb_t color);

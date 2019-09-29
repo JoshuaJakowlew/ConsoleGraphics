@@ -7,6 +7,21 @@
 
 namespace cg
 {
+	namespace palette
+	{
+		constexpr auto size = 16ull;
+		using Palette = std::array<COLORREF, size>;
+
+		constexpr Palette defaultPalette{
+			RGB(0, 0, 0), RGB(0, 0, 128), RGB(0, 128, 0), RGB(0, 128, 128),
+			RGB(128, 0, 0), RGB(128, 0, 128), RGB(128, 128, 0), RGB(192, 192, 192),
+			RGB(128, 128, 128), RGB(0, 0, 255), RGB(0, 255, 0), RGB(0, 255, 255),
+			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
+		};
+	}
+
+	using Palette = palette::Palette;
+
 	struct Color
 	{
 		enum Palette : uint16_t

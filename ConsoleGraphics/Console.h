@@ -8,6 +8,7 @@
 #include <Windows.h>
 
 #include "Vec2.h"
+#include "Color.h"
 
 namespace cg
 {
@@ -15,7 +16,7 @@ namespace cg
 	class Console
 	{
     public:
-		static constexpr auto paletteSize = 16ull;
+		/*static constexpr auto paletteSize = 16ull;
 		using Palette = std::array<COLORREF, paletteSize>;
 
 		static constexpr Palette defaultPalette{
@@ -23,7 +24,7 @@ namespace cg
 			RGB(128, 0, 0), RGB(128, 0, 128), RGB(128, 128, 0), RGB(192, 192, 192),
 			RGB(128, 128, 128), RGB(0, 0, 255), RGB(0, 255, 0), RGB(0, 255, 255),
 			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
-		};
+		};*/
 
 	public:
 		explicit Console(Vec2u resolution, Vec2u font_size) noexcept;
@@ -39,7 +40,7 @@ namespace cg
 		[[nodiscard]] inline Vec2u getResolution() const noexcept;
 		[[nodiscard]] inline Vec2u getMaxResolution() const noexcept;
 		
-		[[nodiscard]] bool setPalette(const Palette& palette) noexcept;
+		[[nodiscard]] bool setPalette(const cg::Palette& palette) noexcept;
 
 	protected:
 		struct Handles
@@ -84,7 +85,7 @@ namespace cg
 	}
 
 	template<typename T>
-	bool Console<T>::setPalette(const Palette& palette) noexcept
+	bool Console<T>::setPalette(const cg::Palette& palette) noexcept
 	{
 		CONSOLE_SCREEN_BUFFER_INFOEX csbi;
 		csbi.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
@@ -132,7 +133,7 @@ namespace cg
 			return false;
 
 		[[unlikely]]
-		if (!setPalette(defaultPalette))
+		if (!setPalette(cg::palette::defaultPalette))
 			return false;
 
 		return true; // Everithing is OK

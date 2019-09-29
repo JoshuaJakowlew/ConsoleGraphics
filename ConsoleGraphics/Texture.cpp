@@ -2,7 +2,7 @@
 
 namespace cg
 {
-	void Texture::setPalette(const std::array<COLORREF, 16>& palette)
+	void Texture::setPalette(const Palette& palette)
 	{
 		m_palette = convertToInternalPalette(palette);
 	}
@@ -25,7 +25,7 @@ namespace cg
 		}
 	}
 
-	std::array<rgb_t, 16> Texture::convertToInternalPalette(std::array<COLORREF, 16> external)
+	std::array<rgb_t, 16> Texture::convertToInternalPalette(Palette external)
 	{
 		auto internal = std::array<rgb_t, 16>{};
 		for (int i = 0; i < 16; ++i)
