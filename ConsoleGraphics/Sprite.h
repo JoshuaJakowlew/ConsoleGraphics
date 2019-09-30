@@ -11,10 +11,10 @@ namespace cg
 	public:
 		Sprite(const Texture& texture) noexcept;
 
-		inline auto getPos() const noexcept -> Vec2i;
-		inline auto getSize() const noexcept -> Vec2i;
-		inline auto getOrigin() const noexcept -> Vec2i;
-		inline auto getData() const noexcept -> const CHAR_INFO*;
+		[[nodiscard]] inline auto getPos() const noexcept -> Vec2i;
+		[[nodiscard]] inline auto getSize() const noexcept -> Vec2i;
+		[[nodiscard]] inline auto getOrigin() const noexcept -> Vec2i;
+		[[nodiscard]] inline auto getData() const noexcept -> const CHAR_INFO*;
 
 		inline auto setPos(Vec2i pos) noexcept -> void;
 		inline auto setOrigin(Vec2i origin) noexcept -> void;
