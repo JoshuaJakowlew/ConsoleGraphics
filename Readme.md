@@ -11,73 +11,77 @@ Console Graphics is a simple C++ library that allows you to use Windows console 
 ### Tutorial
   First of all you need to create and configure the console surface - its resolution and font size.
   
+  To start drawing a sprite, we must load a texture. Texture is our data and sprite is a rectangle with corrdinates that points to texture.
+  Let's see how to display a sprite
+
+  You can also:
+  - Draw lines
+  - Draw rectangles
+  - Draw strings
+  - Draw single pixels
+
   ```C++
 #include "RenderConsole.h"
 
 int main()
 {
-    // Create console window with 80x25 resolution and 16x12 font size
-    cg::RenderConsole console{ {80, 25}, {16, 12} };
-    // If everything is not OK - handle errors
-    if (!console.create())
-        return -1;
-		
-	// Create a color of the cell we will draw
-	// Color consists of a character, background and foreground color
-	cg::Color color{ L'#', cg::Color::Red, cg::Color::Blue };
+	using namespace std;
+
+	// Create custom palette
+    cg::Palette palette{
+			RGB(53, 14, 88), RGB(0, 0, 128), RGB(0, 128, 0), RGB(0, 128, 128),
+			RGB(128, 0, 0), RGB(128, 0, 128), RGB(128, 128, 0), RGB(192, 192, 192),
+			RGB(128, 128, 128), RGB(0, 0, 255), RGB(0, 255, 0), RGB(0, 255, 255),
+			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
+	};
+
+	// Create texture with our palette and load it from file
+	cg::Texture tex{ "image-half.bmp", palette };
+
+	// Create sprite with our texture
+	cg::Sprite sprite{ tex };
+	// Set position to (25, 25)
+	sprite.setPos({ 25, 25 });
 	
-	// Start infinite loop to display our stuff
-	while(true)
+	// Create console with (200, 200) canvas size and (4, 4) font size
+	cg::RenderConsole console{ { 200, 100 }, { 4u, 4u } };
+
+	// Show error if console cunstruction failed
+	if (!console.create())
+		MessageBoxA(0, "Error: can't create console", "Error", MB_ICONERROR);
+
+	// Apply our palette to console
+	console.setPalette(palette);
+
+	// Start main cycle
+	while (true)
 	{
-	    // Put cell at position with x = 1 and y = 1 using our color
-	    console.putCell({ 1, 1 }, color);
-	    // If something went wrong - handle it!
-	    if(!console.display())
-	        return -2;
+		// Clear screen with black color
+		console.fill(CHAR_INFO{ L' ', 0x00 });
+
+		// Rules for move direction
+		static bool direction = false;
+		if (sprite.getPos().x % console.getResolution().x == 0)
+			direction = !direction;
+
+		// Move our sprite
+		sprite.move(cg::Vec2i( direction ? 1 : -1, 0 ));
+		// Draw sprite on the canvas
+		console.drawSprite(sprite);
+
+		// Break if cannot display canvas
+		if (!console.display())
+		{
+			MessageBoxA(0, "Error: can't display console", "Error", MB_ICONERROR);
+			break;
+		}
+
+		// Break after 10s of demo running
+		if (elapsed >= 10s)
+			break;
 	}
 }
   ```
-
-
-You can also:
-  - Draw lines
-  - Draw rectangles
-  - Draw strings
-  - Draw sprites
-
-To start drawing a sprite, we must load a texture. Texture is our data and sprite is a rectangle with corrdinates that points to texture.
-Let's see how to display a sprite
-
-```C++
-// Define a palette of 16 colors
-// Image will be converted to this palette
-vector<rgb_t> palette{
-	{0, 0, 0}, {0, 0, 128}, {0, 128, 0}, {0, 128, 128},
-	{128, 0, 0}, {128, 0, 128}, {128, 128, 0}, {192, 192, 192},
-	{128, 128, 128}, {0, 0, 255}, {0, 255, 0}, {0, 255, 255},
-	{255, 0, 0}, {255, 0, 255}, {255, 255, 0}, {255, 255, 255}
-};
-
-// Create and load a texture
-cg::Texture tex{std::move(palette));
-tex.loadFromBitmap("image.bmp");
-
-// Create our sprite
-cg::Sprite sprite{ tex };
-sprite.setPos({0, 0 });
-
-// Initialize console
-// ...
-// Create main loop
-
-while(true)
-	{
-	    // Finally draw our sprite
-        console.drawSprite(sprite);
-	    if(!console.display())
-	        return -2;
-	}
-```
 
 ### Installation
 VS2017 Solution is provided, do wtf you want with it :)
