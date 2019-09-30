@@ -5,24 +5,33 @@ namespace cg
 	bool RenderConsole::display() noexcept
 	{
 		assert(m_resolution.x <= SHRT_MAX - 1 && m_resolution.y <= SHRT_MAX - 1);
-
-		static COORD screenSize = {
-			static_cast<SHORT>(this->m_resolution.x),
-			static_cast<SHORT>(this->m_resolution.y)
-		};
-
-		static SMALL_RECT writeRegion = {
-			0,
-			0,
-			static_cast<SHORT>(this->m_resolution.x - 1),
-			static_cast<SHORT>(this->m_resolution.y - 1)
-		};
-
-		auto buffer = this->getBuffer();
-		assert(buffer);
 		assert(m_handles.out != INVALID_HANDLE_VALUE);
 
-		return ::WriteConsoleOutputW(this->m_handles.out, buffer, screenSize, { 0, 0 }, &writeRegion);
+		static const COORD screenSize = {
+			static_cast<SHORT>(m_resolution.x),
+			static_cast<SHORT>(m_resolution.y)
+		};
+
+		static const SMALL_RECT writeRegion = {
+			0,
+			0,
+			static_cast<SHORT>(m_resolution.x - 1),
+			static_cast<SHORT>(m_resolution.y - 1)
+		};
+
+		const auto buffer = getBuffer();
+		assert(buffer);
+
+		auto writtenRegion = writeRegion;
+
+		const auto writeResult = ::WriteConsoleOutputW(m_handles.out, buffer, screenSize, { 0, 0 }, &writtenRegion);
+
+		return
+			(writtenRegion.Left == writeRegion.Left) &
+			(writtenRegion.Right == writeRegion.Right) &
+			(writtenRegion.Bottom == writeRegion.Bottom) &
+			(writtenRegion.Top == writeRegion.Top) &
+			writeResult;
 	}
 
 } // namespace cg
