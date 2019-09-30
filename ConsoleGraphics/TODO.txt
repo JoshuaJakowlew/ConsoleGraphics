@@ -1,1 +1,0 @@
-RenderSurface.cpp - add asserts in all draw/fill methods
