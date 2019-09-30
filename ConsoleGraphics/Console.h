@@ -15,17 +15,6 @@ namespace cg
 	template <typename T>
 	class Console
 	{
-    public:
-		/*static constexpr auto paletteSize = 16ull;
-		using Palette = std::array<COLORREF, paletteSize>;
-
-		static constexpr Palette defaultPalette{
-			RGB(0, 0, 0), RGB(0, 0, 128), RGB(0, 128, 0), RGB(0, 128, 128),
-			RGB(128, 0, 0), RGB(128, 0, 128), RGB(128, 128, 0), RGB(192, 192, 192),
-			RGB(128, 128, 128), RGB(0, 0, 255), RGB(0, 255, 0), RGB(0, 255, 255),
-			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
-		};*/
-
 	public:
 		explicit Console(Vec2u resolution, Vec2u font_size) noexcept;
 
@@ -73,33 +62,9 @@ namespace cg
 namespace cg
 {
 	template <typename T>
-	inline Vec2u Console<T>::getResolution() const noexcept
-	{
-		return m_resolution;
-	}
-
-	template <typename T>
-	inline Vec2u Console<T>::getMaxResolution() const noexcept
-	{
-		return m_maxResolution;
-	}
-
-	template<typename T>
-	bool Console<T>::setPalette(const cg::Palette& palette) noexcept
-	{
-		CONSOLE_SCREEN_BUFFER_INFOEX csbi;
-		csbi.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
-		if (!::GetConsoleScreenBufferInfoEx(m_handles.out, &csbi))
-			return false;
-
-		std::copy(std::begin(palette), std::end(palette), std::begin(csbi.ColorTable));
-		return ::SetConsoleScreenBufferInfoEx(m_handles.out, &csbi);
-	}
-
-	template <typename T>
 	Console<T>::Console(Vec2u resolution, Vec2u font_size) noexcept :
-		m_resolution{ resolution },
-		m_fontSize{ font_size }
+		m_resolution{ std::move(resolution) },
+		m_fontSize{ std::move(font_size) }
 	{}
 
 	template <typename T>
@@ -136,7 +101,7 @@ namespace cg
 		if (!setPalette(cg::palette::defaultPalette))
 			return false;
 
-		return true; // Everithing is OK
+		return true; // Everything is OK
 	}
 
 	template <typename T>
@@ -147,11 +112,38 @@ namespace cg
 	}
 
 	template <typename T>
+	inline Vec2u Console<T>::getResolution() const noexcept
+	{
+		return m_resolution;
+	}
+
+	template <typename T>
+	inline Vec2u Console<T>::getMaxResolution() const noexcept
+	{
+		return m_maxResolution;
+	}
+
+	template<typename T>
+	bool Console<T>::setPalette(const cg::Palette& palette) noexcept
+	{
+		CONSOLE_SCREEN_BUFFER_INFOEX csbi;
+		csbi.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
+
+		[[unlikely]]
+		if (!::GetConsoleScreenBufferInfoEx(m_handles.out, &csbi))
+			return false;
+
+		std::copy(std::begin(palette), std::end(palette), std::begin(csbi.ColorTable));
+		return ::SetConsoleScreenBufferInfoEx(m_handles.out, &csbi);
+	}
+
+	template <typename T>
 	Vec2u Console<T>::getMaxScreenBufferSize() noexcept
 	{
 		assert(m_handles.out != INVALID_HANDLE_VALUE);
 
 		CONSOLE_SCREEN_BUFFER_INFO csbi;
+
 		[[unlikely]]
 		if (!::GetConsoleScreenBufferInfo(m_handles.out, &csbi))
 			return { 0, 0 };
@@ -165,12 +157,12 @@ namespace cg
 	template <typename T>
 	bool Console<T>::getStdHandles() noexcept
 	{
-		auto original_handle = ::GetStdHandle(STD_OUTPUT_HANDLE);
-		auto input_handle = ::GetStdHandle(STD_INPUT_HANDLE);
+		const auto original_handle = ::GetStdHandle(STD_OUTPUT_HANDLE);
+		const auto input_handle = ::GetStdHandle(STD_INPUT_HANDLE);
 
 		[[unlikely]]
-		if (original_handle == INVALID_HANDLE_VALUE ||
-			input_handle == INVALID_HANDLE_VALUE)
+		if (INVALID_HANDLE_VALUE == original_handle ||
+			INVALID_HANDLE_VALUE == input_handle)
 			return false;
 
 		m_handles.original = original_handle;
@@ -181,12 +173,12 @@ namespace cg
 	template <typename T>
 	bool Console<T>::createScreenBuffer() noexcept
 	{
-		auto buffer_handle = ::CreateConsoleScreenBuffer(
-			GENERIC_READ | GENERIC_WRITE,
-			FILE_SHARE_READ | FILE_SHARE_WRITE,
-			NULL,
-			CONSOLE_TEXTMODE_BUFFER,
-			NULL
+		const auto buffer_handle = ::CreateConsoleScreenBuffer(
+			/* dwDesiredAccess      */ GENERIC_READ | GENERIC_WRITE,
+			/* dwShareMode          */ FILE_SHARE_READ | FILE_SHARE_WRITE,
+			/* lpSecurityAttributes */ NULL,
+			/* dwFlags              */ CONSOLE_TEXTMODE_BUFFER,
+			/* lpScreenBufferData   */ NULL
 		);
 
 		[[unlikely]]
@@ -200,14 +192,16 @@ namespace cg
 	template <typename T>
 	bool Console<T>::configureOutput() noexcept
 	{
+		/*
 		// Enable ANSI escape codes
-		/*DWORD dwMode = 0;
+		DWORD dwMode = 0;
 		if (!::GetConsoleMode(m_handles.out, &dwMode))
 			return false;
 
 		dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 		if (!::SetConsoleMode(m_handles.out, dwMode))
-			return false;*/
+			return false;
+		*/
 
 		// Enable unicode
 		[[unlikely]]
@@ -237,44 +231,50 @@ namespace cg
 
 		// Screen buffer can't be less then actual console window size
 		// So, we set minimal window size and then extend screen buffer as far as we wish
-		SMALL_RECT windowSize = { 0, 0, 1, 1 };
+		const SMALL_RECT windowSize = { 0, 0, 1, 1 };
+
 		[[unlikely]]
 		if (!::SetConsoleWindowInfo(m_handles.out, TRUE, &windowSize))
 			return false;
 
 		// Extend screen buffer to given size
-		COORD bufferSize = {
+		const COORD bufferSize = {
 			static_cast<SHORT>(m_resolution.x),
 			static_cast<SHORT>(m_resolution.y)
 		};
+
 		[[unlikely]]
 		if (!::SetConsoleScreenBufferSize(m_handles.out, bufferSize))
 			return false;
 
 		// Assign screen buffer to the console
 		assert(m_handles.out != INVALID_HANDLE_VALUE);
+
 		[[unlikely]]
 		if (!::SetConsoleActiveScreenBuffer(m_handles.out))
 			return false;
 
-		// Set the font size now that the screen buffer has been assigned to the console
+		// Set the font size when the screen buffer has been already assigned to the console
 		[[unlikely]]
 		if (!setFontSize(m_fontSize))
 			return false;
 
 		// Get maximum screen size in columns and rows
 		// And check if we are out of the bounds
-		m_maxResolution = getMaxScreenBufferSize();
+		const auto maxResolution = getMaxScreenBufferSize();
 
 		[[unlikely]]
-		if (m_resolution.x > m_maxResolution.x ||
-			m_resolution.y > m_maxResolution.y)
+		if (m_resolution.x > maxResolution.x ||
+			m_resolution.y > maxResolution.y)
 			return false;
 
-		// If evrything is still OK the try to expand window to given size
+		m_maxResolution = maxResolution;
+
+		// If evrything is still OK, try to expand window to given size
 		// Stretch console window back to actual size
 		assert(m_resolution.x <= SHRT_MAX + 1 && m_resolution.y <= SHRT_MAX + 1);
-		windowSize = {
+
+		const SMALL_RECT newWindowSize = {
 			0,
 			0,
 			static_cast<SHORT>(m_resolution.x - 1),
@@ -282,8 +282,9 @@ namespace cg
 		};
 
 		assert(m_handles.out != INVALID_HANDLE_VALUE);
+
 		[[unlikely]]
-		if (!::SetConsoleWindowInfo(m_handles.out, TRUE, &windowSize))
+		if (!::SetConsoleWindowInfo(m_handles.out, TRUE, &newWindowSize))
 			return false;
 
 		return true; // everything is OK
@@ -292,11 +293,13 @@ namespace cg
 	template <typename T>
 	bool Console<T>::disableCursor() noexcept
 	{
-		CONSOLE_CURSOR_INFO cursor_info;
-		cursor_info.dwSize = 42;
-		cursor_info.bVisible = FALSE;
-
 		assert(m_handles.out != INVALID_HANDLE_VALUE);
+
+		const CONSOLE_CURSOR_INFO cursor_info{
+			/* dwSize   */ 42,
+			/* bVisible */ FALSE
+		};
+
 		return ::SetConsoleCursorInfo(m_handles.out, &cursor_info);
 	}
 
@@ -304,6 +307,7 @@ namespace cg
 	bool Console<T>::setFontSize(Vec2u fontSize) noexcept
 	{
 		assert(fontSize.x <= SHRT_MAX && fontSize.y <= SHRT_MAX);
+		assert(m_handles.out != INVALID_HANDLE_VALUE);
 
 		CONSOLE_FONT_INFOEX cfi;
 		cfi.cbSize = sizeof(cfi);
@@ -314,7 +318,6 @@ namespace cg
 		cfi.FontWeight = FW_NORMAL;
 		wcscpy_s(cfi.FaceName, L"Consolas");
 
-		assert(m_handles.out != INVALID_HANDLE_VALUE);
 		return ::SetCurrentConsoleFontEx(m_handles.out, FALSE, &cfi);
 	}
 
