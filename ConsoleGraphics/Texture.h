@@ -20,9 +20,15 @@ namespace cg
 	class Texture
 	{
 	public:
-		Texture(Palette palette) :
+		Texture(Palette palette = palette::defaultPalette) :
 			m_palette(convertToInternalPalette(palette))
 		{}
+
+		Texture(std::string_view path, Palette palette = palette::defaultPalette) :
+			m_palette(convertToInternalPalette(palette))
+		{
+			loadFromBitmap(std::move(path));
+		}
 
 		[[nodiscard]] inline Vec2u getSize() const noexcept;
 
@@ -30,7 +36,7 @@ namespace cg
 		[[nodiscard]] inline const CHAR_INFO * getLine(int line);
 		[[nodiscard]] inline const CHAR_INFO * getBuffer() const;
 
-		void setPalette(const std::array<COLORREF, 16>& palette);
+		void setPalette(const Palette& palette);
 		[[nodiscard]] bool loadFromBitmap(std::string_view path);	
 	private:
 		std::array<rgb_t, 16> m_palette;
