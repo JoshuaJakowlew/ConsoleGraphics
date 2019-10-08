@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <tuple>
 #include <cassert>
+#include <optional>
 
 #include <Windows.h>
 
@@ -20,15 +21,8 @@ namespace cg
 	class Texture
 	{
 	public:
-		Texture(Palette palette = palette::defaultPalette) :
-			m_palette(convertToInternalPalette(palette))
-		{}
-
-		Texture(std::string_view path, Palette palette = palette::defaultPalette) :
-			m_palette(convertToInternalPalette(palette))
-		{
-			loadFromBitmap(std::move(path));
-		}
+		inline Texture(const Palette& palette = palette::defaultPalette);
+		inline Texture(std::string_view path, const Palette& palette = palette::defaultPalette);
 
 		[[nodiscard]] inline Vec2u getSize() const noexcept;
 
@@ -36,18 +30,30 @@ namespace cg
 		[[nodiscard]] inline const CHAR_INFO * getLine(int line);
 		[[nodiscard]] inline const CHAR_INFO * getBuffer() const;
 
-		void setPalette(const Palette& palette);
+		inline void setPalette(const Palette& palette);
 		[[nodiscard]] bool loadFromBitmap(std::string_view path);	
 	private:
-		std::array<rgb_t, 16> m_palette;
+		using InternalPalette = std::array<rgb_t, 16>;
+
+		InternalPalette m_palette;
 		mutable std::vector<CHAR_INFO> m_data;
 		Vec2u m_size;
 
-		[[nodiscard]] std::array<rgb_t, 16> convertToInternalPalette(Palette external);
+		[[nodiscard]] static InternalPalette convertToInternalPalette(const Palette& external) noexcept;
 
-		[[nodiscard]] bool convertBitmapToPalette(const bitmap_image& bitmap, std::vector<CHAR_INFO>& converted_data);
-		[[nodiscard]] std::tuple<size_t, bool> convertColorToPalette(rgb_t color);
+		[[nodiscard]] std::vector<CHAR_INFO> convertBitmapToPalette(const bitmap_image& bitmap);
+		[[nodiscard]] size_t convertColorToPalette(rgb_t color) const noexcept;
 	};
+
+	Texture::Texture(const Palette& palette) :
+		m_palette(convertToInternalPalette(palette))
+	{}
+
+	Texture::Texture(std::string_view path, const Palette& palette) :
+		m_palette(convertToInternalPalette(palette))
+	{
+		loadFromBitmap(std::move(path));
+	}
 
 	inline Vec2u Texture::getSize() const noexcept
 	{
@@ -79,6 +85,11 @@ namespace cg
 	{
 		assert(&m_data[0] != nullptr);
 		return &m_data[0];
+	}
+
+	void Texture::setPalette(const Palette& palette)
+	{
+		m_palette = convertToInternalPalette(palette);
 	}
 
 } // namespace cg
