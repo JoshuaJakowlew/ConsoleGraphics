@@ -27,7 +27,7 @@ namespace cg
 		~Console() noexcept;
 
 		[[nodiscard]] bool create() noexcept;
-		[[nodiscard]] bool pollEvent(INPUT_RECORD& e);
+		[[nodiscard]] bool pollEvent(Event& e);
 		[[nodiscard]] bool display() noexcept;
 
 		[[nodiscard]] inline Vec2u getResolution() const noexcept;
@@ -53,6 +53,10 @@ namespace cg
 
 		std::queue<INPUT_RECORD> m_events;
 	protected:
+		[[nodiscard]] bool sendEvent(Event& e) noexcept;
+		[[nodiscard]] Event translateEvent(const INPUT_RECORD& e) noexcept;
+		[[nodiscard]] bool getEvents();
+
 		[[nodiscard]] Vec2u getMaxScreenBufferSize() noexcept;
 		[[nodiscard]] bool getStdHandles() noexcept;
 		[[nodiscard]] bool createScreenBuffer() noexcept;
@@ -115,34 +119,19 @@ namespace cg
 	}
 
 	template <typename T>
-	bool Console<T>::pollEvent(INPUT_RECORD& e)
+	bool Console<T>::pollEvent(Event& e)
 	{
-		DWORD nEvents;
-		if (!::GetNumberOfConsoleInputEvents(m_handles.in, &nEvents))
-			return false;
-
-		if (0 < nEvents)
+		[[unlikely]]
+		if (!sendEvent(e))
 		{
-			std::vector<INPUT_RECORD> events(nEvents);
-			DWORD eventsRead;
-			if (!::ReadConsoleInput(m_handles.in, events.data(), nEvents, &eventsRead))
+			[[unlikely]]
+			if (!getEvents())
 				return false;
 
-			for (auto e : events)
-			{
-				m_events.push(e);
-			}
+			return sendEvent(e);
 		}
 
-		if (0 < m_events.size())
-		{
-			e = m_events.front();
-			m_events.pop();
-			
-			return true;
-		}
-
-		return false;
+		return true;
 	}
 
 	template <typename T>
@@ -176,6 +165,83 @@ namespace cg
 
 		std::copy(std::begin(palette), std::end(palette), std::begin(csbi.ColorTable));
 		return ::SetConsoleScreenBufferInfoEx(m_handles.out, &csbi);
+	}
+
+	template<typename T>
+	bool Console<T>::sendEvent(Event& e) noexcept
+	{
+		[[unlikely]]
+		if (m_events.size())
+		{
+			e = translateEvent(m_events.front());
+			m_events.pop();
+
+			return true;
+		}
+
+		return false;
+	}
+
+	template<typename T>
+	Event Console<T>::translateEvent(const INPUT_RECORD& e) noexcept
+	{
+		Event event = {};
+
+		if (KEY_EVENT == e.EventType)
+		{
+			event.type = e.Event.KeyEvent.bKeyDown ? EventType::KeyPressed : EventType::KeyReleased;
+			event.key = KeyEvent{
+				e.Event.KeyEvent.dwControlKeyState,
+				e.Event.KeyEvent.uChar.UnicodeChar
+			};
+		}
+		else if (MOUSE_EVENT == e.EventType)
+		{
+			event.type = EventType::Mouse;
+			event.mouse = MouseEvent{
+				e.Event.MouseEvent.dwMousePosition,
+				e.Event.MouseEvent.dwButtonState,
+				e.Event.MouseEvent.dwEventFlags
+			};
+		}
+		else
+		{
+			event.type = EventType::Raw;
+			event.raw = RawEvent{ e };
+		}
+
+		return event;
+	}
+
+	template<typename T>
+	bool Console<T>::getEvents()
+	{
+		assert(INVALID_HANDLE_VALUE != m_handles.in);
+
+		DWORD nEvents;
+		if (!::GetNumberOfConsoleInputEvents(m_handles.in, &nEvents))
+			return false;
+
+		if (nEvents > 0)
+		{
+			std::vector<INPUT_RECORD> events(nEvents);
+			DWORD eventsRead;
+
+			[[unlikely]]
+			if (!::ReadConsoleInput(m_handles.in, events.data(), nEvents, &eventsRead))
+				return false;
+
+			[[unlikely]]
+			if (0 == eventsRead)
+				return false;
+
+			for (auto e : events)
+				m_events.push(e);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	template <typename T>

@@ -34,13 +34,6 @@ int main()
 
 	while (true)
 	{
-		INPUT_RECORD e = {};
-		
-		while (console.pollEvent(e))
-		{
-			auto x = e;
-		}
-
 		console.fill(CHAR_INFO{ L' ', 0x00 });
 
 		static bool direction = false;
@@ -59,8 +52,8 @@ int main()
 		auto end = chrono::system_clock::now();
 		auto elapsed = chrono::duration_cast<chrono::milliseconds>(end - start);
 		++frameCounter;
-		//if (elapsed >= 10s)
-		//	break;
+		if (elapsed >= 10s)
+			break;
 	}
 
 	return frameCounter;
