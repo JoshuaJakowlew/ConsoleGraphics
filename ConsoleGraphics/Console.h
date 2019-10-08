@@ -2,6 +2,7 @@
 #define CONSOLE_H
 
 #include <array>
+#include <vector>
 #include <type_traits>
 #include <cassert>
 
@@ -31,6 +32,28 @@ namespace cg
 		
 		[[nodiscard]] bool setPalette(const cg::Palette& palette) noexcept;
 
+		void pollEvent()
+		{
+			DWORD nEvents = 0;
+			bool success = GetNumberOfConsoleInputEvents(m_handles.in, &nEvents);
+			
+			std::vector<INPUT_RECORD> events(nEvents);
+			DWORD read = 0;
+			success = ReadConsoleInput(m_handles.in, events.data(), nEvents, &read);
+
+			for (auto e : events)
+			{
+				if (e.EventType == MOUSE_EVENT)
+				{
+					continue;
+				}
+				if (e.EventType == KEY_EVENT)
+				{
+					continue;
+				}
+			}
+		}
+
 	protected:
 		struct Handles
 		{
@@ -51,6 +74,7 @@ namespace cg
 		[[nodiscard]] Vec2u getMaxScreenBufferSize() noexcept;
 		[[nodiscard]] bool getStdHandles() noexcept;
 		[[nodiscard]] bool createScreenBuffer() noexcept;
+		[[nodiscard]] bool configureInput() noexcept;
 		[[nodiscard]] bool configureOutput() noexcept;
 		[[nodiscard]] bool assignScreenBuffer() noexcept;
 		[[nodiscard]] bool disableCursor() noexcept;
@@ -79,6 +103,10 @@ namespace cg
 	{
 		[[unlikely]]
 		if (!getStdHandles())
+			return false;
+
+		[[unlikely]]
+		if (!configureInput())
 			return false;
 
 		[[unlikely]]
@@ -190,6 +218,22 @@ namespace cg
 	}
 
 	template <typename T>
+	bool Console<T>::configureInput() noexcept
+	{
+		DWORD dwMode = 0;
+		if (!::GetConsoleMode(m_handles.in, &dwMode))
+			return false;
+
+		dwMode &= ~ENABLE_QUICK_EDIT_MODE;
+		dwMode |= ENABLE_MOUSE_INPUT;
+
+		if (!::SetConsoleMode(m_handles.in, dwMode))
+			return false;
+
+		return true; // everything is OK
+	}
+
+	template <typename T>
 	bool Console<T>::configureOutput() noexcept
 	{
 		/*
@@ -197,7 +241,6 @@ namespace cg
 		DWORD dwMode = 0;
 		if (!::GetConsoleMode(m_handles.out, &dwMode))
 			return false;
-
 		dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
 		if (!::SetConsoleMode(m_handles.out, dwMode))
 			return false;

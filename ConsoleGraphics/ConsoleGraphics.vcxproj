@@ -159,6 +159,8 @@
     <ClInclude Include="bitmap_image.hpp" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="EventManager.h" />
     <ClInclude Include="RenderConsole.h" />
     <ClInclude Include="RenderSurface.h" />
     <ClInclude Include="Sprite.h" />

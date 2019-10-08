@@ -21,7 +21,7 @@ int main()
 
 	cg::Sprite sprite{ tex };
 	sprite.setPos({ 25, 25 });
-	
+
 	cg::RenderConsole console{ { 200, 100 }, { 4u, 4u } };
 
 	if (!console.create())
@@ -34,13 +34,15 @@ int main()
 
 	while (true)
 	{
+		console.pollEvent();
+
 		console.fill(CHAR_INFO{ L' ', 0x00 });
 
 		static bool direction = false;
 		if (sprite.getPos().x % console.getResolution().x == 0)
 			direction = !direction;
 
-		sprite.move(cg::Vec2i( direction ? 1 : -1, 0 ));
+		sprite.move(cg::Vec2i(direction ? 1 : -1, 0));
 		console.drawSprite(sprite);
 
 		if (!console.display())
@@ -52,9 +54,46 @@ int main()
 		auto end = chrono::system_clock::now();
 		auto elapsed = chrono::duration_cast<chrono::milliseconds>(end - start);
 		++frameCounter;
-		if (elapsed >= 10s)
-			break;
+		//if (elapsed >= 10s)
+		//	break;
 	}
 
 	return frameCounter;
 }
+
+//	HANDLE in = GetStdHandle(STD_INPUT_HANDLE);
+//
+//	DWORD dwMode = 0;
+//	if (!::GetConsoleMode(in, &dwMode))
+//		return false;
+//	dwMode &= ~ENABLE_QUICK_EDIT_MODE;
+//	dwMode |= ENABLE_PROCESSED_INPUT;
+//	dwMode |= ENABLE_MOUSE_INPUT;
+//	dwMode |= ENABLE_WINDOW_INPUT;
+//
+//	if (!::SetConsoleMode(in, dwMode))
+//		return false;
+//
+//	while (true)
+//	{
+//		DWORD nEvents = 0;
+//		bool success = GetNumberOfConsoleInputEvents(in, &nEvents);
+//
+//		std::vector<INPUT_RECORD> events(nEvents);
+//
+//		DWORD read = 0;
+//		success = ReadConsoleInput(in, events.data(), nEvents, &read);
+//
+//		for (auto e : events)
+//		{
+//			if (e.EventType == MOUSE_EVENT)
+//			{
+//				continue;
+//			}
+//			if (e.EventType == KEY_EVENT)
+//			{
+//				continue;
+//			}
+//		}
+//	}
+//}
