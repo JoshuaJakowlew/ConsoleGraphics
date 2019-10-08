@@ -164,6 +164,16 @@ namespace cg
 			return false;
 
 		std::copy(std::begin(palette), std::end(palette), std::begin(csbi.ColorTable));
+
+		// Fix WinApi bug
+		// When SetConsoleSccreenBufferInfoEx is invoked, window bouns are decremented
+		// and awful scrollbars appear (usually both, sometimes only horizontal)
+		// To fix this problem, increment windows boundary before function call
+
+		// TODO: Create separateSetConsoleScreenBufferInfoEx wrapper with bugfix?
+		++csbi.srWindow.Bottom;
+		++csbi.srWindow.Right;
+		
 		return ::SetConsoleScreenBufferInfoEx(m_handles.out, &csbi);
 	}
 
