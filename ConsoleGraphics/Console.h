@@ -3,6 +3,7 @@
 
 #include <array>
 #include <vector>
+#include <queue>
 #include <type_traits>
 #include <cassert>
 
@@ -10,6 +11,7 @@
 
 #include "Vec2.h"
 #include "Color.h"
+#include "Event.h"
 
 namespace cg
 {
@@ -25,34 +27,13 @@ namespace cg
 		~Console() noexcept;
 
 		[[nodiscard]] bool create() noexcept;
+		[[nodiscard]] bool pollEvent(INPUT_RECORD& e);
 		[[nodiscard]] bool display() noexcept;
 
 		[[nodiscard]] inline Vec2u getResolution() const noexcept;
 		[[nodiscard]] inline Vec2u getMaxResolution() const noexcept;
 		
 		[[nodiscard]] bool setPalette(const cg::Palette& palette) noexcept;
-
-		void pollEvent()
-		{
-			DWORD nEvents = 0;
-			bool success = GetNumberOfConsoleInputEvents(m_handles.in, &nEvents);
-			
-			std::vector<INPUT_RECORD> events(nEvents);
-			DWORD read = 0;
-			success = ReadConsoleInput(m_handles.in, events.data(), nEvents, &read);
-
-			for (auto e : events)
-			{
-				if (e.EventType == MOUSE_EVENT)
-				{
-					continue;
-				}
-				if (e.EventType == KEY_EVENT)
-				{
-					continue;
-				}
-			}
-		}
 
 	protected:
 		struct Handles
@@ -70,6 +51,7 @@ namespace cg
 
 		Palette m_palette;
 
+		std::queue<INPUT_RECORD> m_events;
 	protected:
 		[[nodiscard]] Vec2u getMaxScreenBufferSize() noexcept;
 		[[nodiscard]] bool getStdHandles() noexcept;
@@ -130,6 +112,37 @@ namespace cg
 			return false;
 
 		return true; // Everything is OK
+	}
+
+	template <typename T>
+	bool Console<T>::pollEvent(INPUT_RECORD& e)
+	{
+		DWORD nEvents;
+		if (!::GetNumberOfConsoleInputEvents(m_handles.in, &nEvents))
+			return false;
+
+		if (0 < nEvents)
+		{
+			std::vector<INPUT_RECORD> events(nEvents);
+			DWORD eventsRead;
+			if (!::ReadConsoleInput(m_handles.in, events.data(), nEvents, &eventsRead))
+				return false;
+
+			for (auto e : events)
+			{
+				m_events.push(e);
+			}
+		}
+
+		if (0 < m_events.size())
+		{
+			e = m_events.front();
+			m_events.pop();
+			
+			return true;
+		}
+
+		return false;
 	}
 
 	template <typename T>

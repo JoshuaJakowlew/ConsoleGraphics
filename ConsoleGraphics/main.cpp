@@ -34,7 +34,12 @@ int main()
 
 	while (true)
 	{
-		console.pollEvent();
+		INPUT_RECORD e = {};
+		
+		while (console.pollEvent(e))
+		{
+			auto x = e;
+		}
 
 		console.fill(CHAR_INFO{ L' ', 0x00 });
 
@@ -60,40 +65,3 @@ int main()
 
 	return frameCounter;
 }
-
-//	HANDLE in = GetStdHandle(STD_INPUT_HANDLE);
-//
-//	DWORD dwMode = 0;
-//	if (!::GetConsoleMode(in, &dwMode))
-//		return false;
-//	dwMode &= ~ENABLE_QUICK_EDIT_MODE;
-//	dwMode |= ENABLE_PROCESSED_INPUT;
-//	dwMode |= ENABLE_MOUSE_INPUT;
-//	dwMode |= ENABLE_WINDOW_INPUT;
-//
-//	if (!::SetConsoleMode(in, dwMode))
-//		return false;
-//
-//	while (true)
-//	{
-//		DWORD nEvents = 0;
-//		bool success = GetNumberOfConsoleInputEvents(in, &nEvents);
-//
-//		std::vector<INPUT_RECORD> events(nEvents);
-//
-//		DWORD read = 0;
-//		success = ReadConsoleInput(in, events.data(), nEvents, &read);
-//
-//		for (auto e : events)
-//		{
-//			if (e.EventType == MOUSE_EVENT)
-//			{
-//				continue;
-//			}
-//			if (e.EventType == KEY_EVENT)
-//			{
-//				continue;
-//			}
-//		}
-//	}
-//}
