@@ -34,7 +34,7 @@ int main()
 
 	cg::Event e = {};
 
-	while (true)
+	while (console.isOpen())
 	{
 		while (console.pollEvent(e))
 		{
@@ -63,8 +63,8 @@ int main()
 		auto elapsed = chrono::duration_cast<chrono::milliseconds>(end - start);
 		++frameCounter;
 		if (elapsed >= 10s)
-			break;
+			console.destroy();
 	}
 
-	return frameCounter;
+	cout << frameCounter << endl;
 }

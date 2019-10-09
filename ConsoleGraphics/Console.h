@@ -23,12 +23,13 @@ namespace cg
 
 		Console(const Console&) = delete;
 		Console& operator=(const Console&) = delete;
-		
-		~Console() noexcept;
 
 		[[nodiscard]] bool create() noexcept;
 		[[nodiscard]] bool pollEvent(Event& e);
 		[[nodiscard]] bool display() noexcept;
+		[[nodiscard]] bool destroy() noexcept;
+
+		[[nodiscard]] bool isOpen() const noexcept;
 
 		[[nodiscard]] inline Vec2u getResolution() const noexcept;
 		[[nodiscard]] inline Vec2u getMaxResolution() const noexcept;
@@ -44,6 +45,7 @@ namespace cg
 		};
 
 		Handles m_handles;
+		bool m_isOpen = false;
 
 		Vec2u m_resolution;
 		Vec2u m_maxResolution;
@@ -80,13 +82,6 @@ namespace cg
 	{}
 
 	template <typename T>
-	Console<T>::~Console() noexcept
-	{
-		::SetConsoleActiveScreenBuffer(m_handles.original);
-		::CloseHandle(m_handles.out);
-	}
-
-	template <typename T>
 	bool Console<T>::create() noexcept
 	{
 		[[unlikely]]
@@ -117,6 +112,8 @@ namespace cg
 		if (!setPalette(cg::palette::defaultPalette))
 			return false;
 
+		m_isOpen = true;
+
 		return true; // Everything is OK
 	}
 
@@ -141,6 +138,26 @@ namespace cg
 	{
 		static_assert(std::is_same_v<T*, decltype(this)>);
 		static_cast<T*>(this)->display();
+	}
+
+	template<typename T>
+	bool Console<T>::destroy() noexcept
+	{
+		if(!::SetConsoleActiveScreenBuffer(m_handles.original))
+			return false;
+		
+		if(!::CloseHandle(m_handles.out))
+			return false;
+
+		m_isOpen = false;
+
+		return true;
+	}
+
+	template<typename T>
+	inline bool Console<T>::isOpen() const noexcept
+	{
+		return m_isOpen;
 	}
 
 	template <typename T>
