@@ -9,7 +9,8 @@ namespace cg
 	{
 		KeyPressed,
 		KeyReleased,
-		Mouse,
+		MouseMove,
+		MouseClick,
 		Raw
 	};
 
@@ -21,14 +22,33 @@ namespace cg
 	struct KeyEvent
 	{
 		DWORD controlKeyState;
+		WORD scanCode;
 		wchar_t key;
 	};
 
-	struct MouseEvent
+	/*struct MouseEvent
 	{
 		COORD position;
 		DWORD buttonState;
 		DWORD eventFlags;
+	};*/
+
+	enum class MouseButton
+	{
+		Left,
+		Right
+	};
+
+	struct MouseClickEvent
+	{
+		COORD position;
+		MouseButton button;
+		bool doubleClick;
+	};
+
+	struct MouseMoveEvent
+	{
+		COORD position;
 	};
 
 	struct Event
@@ -38,7 +58,8 @@ namespace cg
 		{
 			RawEvent raw;
 			KeyEvent key;
-			MouseEvent mouse;
+			MouseMoveEvent mouseMove;
+			MouseClickEvent mouseClick;
 		};		
 	};
 

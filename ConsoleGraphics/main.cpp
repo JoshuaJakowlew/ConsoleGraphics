@@ -32,8 +32,18 @@ int main()
 	int frameCounter = 0;
 	auto start = chrono::system_clock::now();
 
+	cg::Event e = {};
+
 	while (true)
 	{
+		while (console.pollEvent(e))
+		{
+			if (e.type == cg::EventType::MouseClick)
+				continue;
+			if (e.type == cg::EventType::MouseMove)
+				continue;
+		}
+
 		console.fill(CHAR_INFO{ L' ', 0x00 });
 
 		static bool direction = false;

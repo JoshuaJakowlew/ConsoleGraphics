@@ -55,6 +55,8 @@ namespace cg
 	protected:
 		[[nodiscard]] bool sendEvent(Event& e) noexcept;
 		[[nodiscard]] Event translateEvent(const INPUT_RECORD& e) noexcept;
+		[[nodiscard]] Event translateKeyEvent(const INPUT_RECORD& e) noexcept;
+		[[nodiscard]] Event translateMouseEvent(const INPUT_RECORD& e) noexcept;
 		[[nodiscard]] bool getEvents();
 
 		[[nodiscard]] Vec2u getMaxScreenBufferSize() noexcept;
@@ -198,27 +200,68 @@ namespace cg
 		Event event = {};
 
 		if (KEY_EVENT == e.EventType)
-		{
-			event.type = e.Event.KeyEvent.bKeyDown ? EventType::KeyPressed : EventType::KeyReleased;
-			event.key = KeyEvent{
-				e.Event.KeyEvent.dwControlKeyState,
-				e.Event.KeyEvent.uChar.UnicodeChar
-			};
-		}
+			return translateKeyEvent(e);
 		else if (MOUSE_EVENT == e.EventType)
-		{
-			event.type = EventType::Mouse;
-			event.mouse = MouseEvent{
-				e.Event.MouseEvent.dwMousePosition,
-				e.Event.MouseEvent.dwButtonState,
-				e.Event.MouseEvent.dwEventFlags
-			};
-		}
+			return translateMouseEvent(e);
 		else
 		{
 			event.type = EventType::Raw;
 			event.raw = RawEvent{ e };
 		}
+
+		return event;
+	}
+
+	template<typename T>
+	Event Console<T>::translateKeyEvent(const INPUT_RECORD& e) noexcept
+	{
+		Event event = {};
+		if (e.Event.KeyEvent.bKeyDown)
+			event.type = EventType::KeyPressed;
+		else
+			event.type = EventType::KeyReleased;
+
+		KeyEvent key = {};
+		key.key = e.Event.KeyEvent.uChar.UnicodeChar;
+		key.scanCode = e.Event.KeyEvent.wVirtualScanCode;
+		key.controlKeyState = e.Event.KeyEvent.dwControlKeyState;
+
+		event.key = key;
+
+		return event;
+	}
+
+	// TODO: Check all cases
+	template<typename T>
+	Event Console<T>::translateMouseEvent(const INPUT_RECORD& e) noexcept
+	{
+		Event event = {};
+
+		const auto buttonState = e.Event.MouseEvent.dwButtonState;
+		if (buttonState)
+		{
+			event.type = EventType::MouseClick;
+			
+			MouseClickEvent click;
+			if (FROM_LEFT_1ST_BUTTON_PRESSED & buttonState)
+				click.button = MouseButton::Left;
+			else if (RIGHTMOST_BUTTON_PRESSED & buttonState)
+				click.button = MouseButton::Right;
+
+			click.position = e.Event.MouseEvent.dwMousePosition;
+			click.doubleClick = DOUBLE_CLICK & e.Event.MouseEvent.dwEventFlags;
+			event.mouseClick = click;
+		}
+		else if (MOUSE_MOVED & e.Event.MouseEvent.dwEventFlags)
+		{
+			event.type = EventType::MouseMove;
+
+			MouseMoveEvent move;
+			move.position = e.Event.MouseEvent.dwMousePosition;
+
+			event.mouseMove = move;
+		}
+
 
 		return event;
 	}
