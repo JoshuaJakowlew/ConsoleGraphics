@@ -24,10 +24,9 @@ namespace cg
 		Console(const Console&) = delete;
 		Console& operator=(const Console&) = delete;
 
-		[[nodiscard]] bool create() noexcept;
 		[[nodiscard]] bool pollEvent(Event& e);
 		[[nodiscard]] bool display() noexcept;
-		[[nodiscard]] bool destroy() noexcept;
+		[[nodiscard]] bool close() noexcept;
 
 		[[nodiscard]] bool isOpen() const noexcept;
 
@@ -61,6 +60,7 @@ namespace cg
 		[[nodiscard]] Event translateMouseEvent(const INPUT_RECORD& e) noexcept;
 		[[nodiscard]] bool getEvents();
 
+		[[nodiscard]] bool create() noexcept;
 		[[nodiscard]] Vec2u getMaxScreenBufferSize() noexcept;
 		[[nodiscard]] bool getStdHandles() noexcept;
 		[[nodiscard]] bool createScreenBuffer() noexcept;
@@ -79,42 +79,8 @@ namespace cg
 	Console<T>::Console(Vec2u resolution, Vec2u font_size) noexcept :
 		m_resolution{ std::move(resolution) },
 		m_fontSize{ std::move(font_size) }
-	{}
-
-	template <typename T>
-	bool Console<T>::create() noexcept
 	{
-		[[unlikely]]
-		if (!getStdHandles())
-			return false;
-
-		[[unlikely]]
-		if (!configureInput())
-			return false;
-
-		[[unlikely]]
-		if (!createScreenBuffer())
-			return false;
-
-		[[unlikely]]
-		if (!configureOutput())
-			return false;
-
-		[[unlikely]]
-		if (!assignScreenBuffer())
-			return false;
-
-		[[unlikely]]
-		if (!disableCursor())
-			return false;
-
-		[[unlikely]]
-		if (!setPalette(cg::palette::defaultPalette))
-			return false;
-
-		m_isOpen = true;
-
-		return true; // Everything is OK
+		m_isOpen = create();
 	}
 
 	template <typename T>
@@ -137,11 +103,11 @@ namespace cg
 	bool Console<T>::display() noexcept
 	{
 		static_assert(std::is_same_v<T*, decltype(this)>);
-		static_cast<T*>(this)->display();
+		return static_cast<T*>(this)->display();
 	}
 
 	template<typename T>
-	bool Console<T>::destroy() noexcept
+	bool Console<T>::close() noexcept
 	{
 		if(!::SetConsoleActiveScreenBuffer(m_handles.original))
 			return false;
@@ -312,6 +278,42 @@ namespace cg
 		}
 
 		return false;
+	}
+
+	template <typename T>
+	bool Console<T>::create() noexcept
+	{
+		[[unlikely]]
+		if (!getStdHandles())
+			return false;
+
+		[[unlikely]]
+		if (!configureInput())
+			return false;
+
+		[[unlikely]]
+		if (!createScreenBuffer())
+			return false;
+
+		[[unlikely]]
+		if (!configureOutput())
+			return false;
+
+		[[unlikely]]
+		if (!assignScreenBuffer())
+			return false;
+
+		[[unlikely]]
+		if (!disableCursor())
+			return false;
+
+		[[unlikely]]
+		if (!setPalette(cg::palette::defaultPalette))
+			return false;
+
+		m_isOpen = true;
+
+		return true; // Everything is OK
 	}
 
 	template <typename T>

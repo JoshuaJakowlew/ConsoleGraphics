@@ -19,6 +19,9 @@ namespace cg
 			static_cast<SHORT>(m_resolution.y - 1)
 		};
 
+		if (!m_isOpen)
+			return false;
+
 		const auto buffer = getBuffer();
 		assert(buffer);
 
