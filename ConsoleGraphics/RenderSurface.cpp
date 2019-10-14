@@ -105,19 +105,25 @@ namespace cg
 
 	auto RenderSurface::drawSprite(const Sprite& sprite) -> void
 	{
-		for (unsigned y = 0; y < sprite.getSize().y; ++y)
-		{
-			const auto line_offset = sprite.getData() + y * sprite.getSize().x;
-			for (unsigned x = 0; x < sprite.getSize().x; ++x)
-			{
-				const auto pos = sprite.getActualPos() + Vec2i{static_cast<int>(x), static_cast<int>(y)};
-				const auto cellptr = line_offset + x;
+		constexpr auto cellEq = [](CHAR_INFO lhs, CHAR_INFO rhs) noexcept {
+			return lhs.Attributes == rhs.Attributes && lhs.Char.UnicodeChar == rhs.Char.UnicodeChar;
+		};
 
-				if (sprite.isTransparent() &&
-					cellptr->Attributes == sprite.getTransparentColor().Attributes &&
-					cellptr->Char.UnicodeChar == sprite.getTransparentColor().Char.UnicodeChar)
+		const auto start = sprite.getActualPos();
+		const auto end = start + sprite.getSize();
+
+		for (auto y = start.y; y < end.y; ++y)
+		{
+			const auto offset = sprite.getSize().x * (y - start.y);
+			const auto line_offset = sprite.getData() + offset;
+			
+			for (auto x = start.x; x < end.x; ++x)
+			{
+				const auto cellptr = line_offset + (x - start.x);
+				if (sprite.isTransparent() && cellEq(*cellptr, sprite.getTransparentColor()))
 					continue;
-				putCell(pos.x, pos.y, *cellptr);
+
+				putCell(x, y, *cellptr);
 			}
 		}
 	}
