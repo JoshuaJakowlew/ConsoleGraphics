@@ -2,7 +2,7 @@
 #include <string>
 #include <chrono>
 
-#include "RenderConsole.h"
+#include "cg.h"
 
 int main()
 {
