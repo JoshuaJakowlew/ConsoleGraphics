@@ -105,22 +105,6 @@ namespace cg
 
 	auto RenderSurface::drawSprite(const Sprite& sprite) -> void
 	{
-		/*auto left = sprite.getPos();
-		auto right = sprite.getPos() + sprite.getSize();
-
-		clamp(left.x, right.y);
-		clamp(right.x, right.y);
-
-		for (auto y = left.y; y <= right.y; ++y)
-		{
-			const std::uintptr_t offset = y * sprite.getSize().x;
-			const auto srcLine = sprite.getData() + offset;
-			const auto dstLine = &m_surface[0] + offset + left.x;
-			const auto size = (right.x - left.x + 1) * sizeof(CHAR_INFO);
-
-			std::memcpy(dstLine, srcLine, size);
-		}*/
-
 		for (unsigned y = 0; y < sprite.getSize().y; ++y)
 		{
 			const auto line_offset = sprite.getData() + y * sprite.getSize().x;

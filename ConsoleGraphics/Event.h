@@ -26,13 +26,6 @@ namespace cg
 		wchar_t key;
 	};
 
-	/*struct MouseEvent
-	{
-		COORD position;
-		DWORD buttonState;
-		DWORD eventFlags;
-	};*/
-
 	enum class MouseButton
 	{
 		Left,
