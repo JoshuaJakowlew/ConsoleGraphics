@@ -19,10 +19,14 @@ namespace cg
 		inline auto setPos(Vec2i pos) noexcept -> void;
 		inline auto setOrigin(Vec2i origin) noexcept -> void;
 		inline auto move(Vec2i offset) noexcept -> void;
+
+		inline auto isTransparent() const noexcept -> bool;
+		inline auto setTransparent(bool transparent) noexcept -> void;
 	private:
 		Vec2i m_pos = { 0, 0 };
 		Vec2i m_size;
 		Vec2i m_origin;
+		bool m_transparent = false;
 		const CHAR_INFO* m_data = nullptr;
 	};
 
@@ -65,6 +69,16 @@ namespace cg
 	inline auto Sprite::move(Vec2i offset) noexcept -> void
 	{
 		m_pos += offset;
+	}
+
+	inline auto Sprite::isTransparent() const noexcept -> bool
+	{
+		return m_transparent;
+	}
+
+	inline auto Sprite::setTransparent(bool transparent) noexcept -> void
+	{
+		m_transparent = transparent;
 	}
 
 } // namespace cg

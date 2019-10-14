@@ -17,10 +17,15 @@ int main()
 			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
 	};
 
-	cg::Texture tex{ "image-half.bmp", palette };
+	cg::Texture tex{ "sprite.bmp", palette };
 
 	cg::Sprite sprite{ tex };
 	sprite.setPos({ 25, 25 });
+	sprite.setTransparent(true);
+
+	cg::Sprite sprite1{ tex };
+	sprite1.setPos({ 25, 25 });
+	sprite1.setTransparent(true);
 
 	cg::RenderConsole console{ { 200, 100 }, { 4, 4 } };
 	if (!console.isOpen())
@@ -30,6 +35,7 @@ int main()
 
 	while (console.isOpen())
 	{
+		
 		cg::Event e = {};
 		while (console.pollEvent(e))
 		{
@@ -41,6 +47,7 @@ int main()
 
 		console.fill(CHAR_INFO{ L' ', 0x00 });
 
+		console.drawSprite(sprite1);
 		console.drawSprite(sprite);
 
 		if (!console.display())
