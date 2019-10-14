@@ -25,7 +25,7 @@ int main()
 
 	cg::Sprite sprite1{ tex };
 	sprite1.setPos({ 25, 25 });
-	sprite1.setTransparent(true);
+	sprite1.setTransparent(true, *(sprite1.getData() + 5));
 
 	cg::RenderConsole console{ { 200, 100 }, { 4, 4 } };
 	if (!console.isOpen())

@@ -22,11 +22,14 @@ namespace cg
 
 		inline auto isTransparent() const noexcept -> bool;
 		inline auto setTransparent(bool transparent) noexcept -> void;
+		inline auto setTransparent(bool transparent, CHAR_INFO color) noexcept -> void;
+		inline auto getTransparentColor() const noexcept -> CHAR_INFO;
 	private:
 		Vec2i m_pos = { 0, 0 };
 		Vec2i m_size;
 		Vec2i m_origin;
 		bool m_transparent = false;
+		CHAR_INFO m_transparentColor;
 		const CHAR_INFO* m_data = nullptr;
 	};
 
@@ -78,7 +81,18 @@ namespace cg
 
 	inline auto Sprite::setTransparent(bool transparent) noexcept -> void
 	{
+		setTransparent(transparent, *m_data);
+	}
+
+	inline auto Sprite::setTransparent(bool transparent, CHAR_INFO color) noexcept -> void
+	{
 		m_transparent = transparent;
+		m_transparentColor = color;
+	}
+
+	inline auto Sprite::getTransparentColor() const noexcept -> CHAR_INFO
+	{
+		return m_transparentColor;
 	}
 
 } // namespace cg

@@ -121,8 +121,6 @@ namespace cg
 			std::memcpy(dstLine, srcLine, size);
 		}*/
 
-		auto transparentColor = *sprite.getData();
-
 		for (unsigned y = 0; y < sprite.getSize().y; ++y)
 		{
 			const auto line_offset = sprite.getData() + y * sprite.getSize().x;
@@ -133,7 +131,9 @@ namespace cg
 				const auto yPos = sprite.getPos().y - sprite.getOrigin().y + y;
 				const auto cellptr = line_offset + x;
 
-				if (sprite.isTransparent() && cellptr->Attributes == transparentColor.Attributes && cellptr->Char.UnicodeChar == transparentColor.Char.UnicodeChar)
+				if (sprite.isTransparent() &&
+					cellptr->Attributes == sprite.getTransparentColor().Attributes &&
+					cellptr->Char.UnicodeChar == sprite.getTransparentColor().Char.UnicodeChar)
 					continue;
 				putCell(xPos, yPos, *cellptr);
 			}
