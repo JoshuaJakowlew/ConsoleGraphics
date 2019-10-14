@@ -12,6 +12,7 @@ namespace cg
 		Sprite(const Texture& texture) noexcept;
 
 		[[nodiscard]] inline auto getPos() const noexcept -> Vec2i;
+		[[nodiscard]] inline auto getActualPos() const noexcept -> Vec2i;
 		[[nodiscard]] inline auto getSize() const noexcept -> Vec2i;
 		[[nodiscard]] inline auto getOrigin() const noexcept -> Vec2i;
 		[[nodiscard]] inline auto getData() const noexcept -> const CHAR_INFO*;
@@ -42,6 +43,11 @@ namespace cg
 	inline auto cg::Sprite::getPos() const noexcept -> Vec2i
 	{
 		return m_pos;
+	}
+
+	inline auto Sprite::getActualPos() const noexcept -> Vec2i
+	{
+		return m_pos - m_origin;
 	}
 
 	inline auto Sprite::getSize() const noexcept -> Vec2i

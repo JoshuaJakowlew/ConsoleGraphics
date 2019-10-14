@@ -35,7 +35,6 @@ int main()
 
 	while (console.isOpen())
 	{
-		
 		cg::Event e = {};
 		while (console.pollEvent(e))
 		{

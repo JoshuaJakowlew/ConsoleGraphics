@@ -126,16 +126,14 @@ namespace cg
 			const auto line_offset = sprite.getData() + y * sprite.getSize().x;
 			for (unsigned x = 0; x < sprite.getSize().x; ++x)
 			{
-				//const auto pos = sprite.getPos() + Vec2i{static_cast<int>(x), static_cast<int>(y)};
-				const auto xPos = sprite.getPos().x - sprite.getOrigin().x + x;
-				const auto yPos = sprite.getPos().y - sprite.getOrigin().y + y;
+				const auto pos = sprite.getActualPos() + Vec2i{static_cast<int>(x), static_cast<int>(y)};
 				const auto cellptr = line_offset + x;
 
 				if (sprite.isTransparent() &&
 					cellptr->Attributes == sprite.getTransparentColor().Attributes &&
 					cellptr->Char.UnicodeChar == sprite.getTransparentColor().Char.UnicodeChar)
 					continue;
-				putCell(xPos, yPos, *cellptr);
+				putCell(pos.x, pos.y, *cellptr);
 			}
 		}
 	}
