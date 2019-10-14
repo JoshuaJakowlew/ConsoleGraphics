@@ -1,7 +1,6 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
-#include "Vec2.h"
 #include "Texture.h"
 
 namespace cg

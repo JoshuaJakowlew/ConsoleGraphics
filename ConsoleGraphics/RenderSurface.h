@@ -1,6 +1,6 @@
-#pragma once
+#ifndef RENDER_SURFACE_H
+#define RENDER_SURFACE_H
 
-#include "Color.h"
 #include "Sprite.h"
 
 namespace cg
@@ -125,3 +125,5 @@ namespace cg
 	}
 
 } // namespace cg
+
+#endif
