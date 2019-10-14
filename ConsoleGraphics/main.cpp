@@ -15,7 +15,7 @@ int main()
 			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
 	};
 
-	cg::Texture tex{ "sprite.bmp", palette };
+	cg::Texture tex{ "assets/sprite.bmp", palette };
 
 	cg::Sprite sprite{ tex };
 	sprite.setPos({ 25, 25 });
