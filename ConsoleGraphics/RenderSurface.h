@@ -1,13 +1,5 @@
 #pragma once
 
-#include <vector>
-#include <array>
-#include <string_view>
-#include <cassert>
-
-#include <Windows.h>
-
-#include "Vec2.h"
 #include "Color.h"
 #include "Sprite.h"
 

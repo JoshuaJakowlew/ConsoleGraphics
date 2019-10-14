@@ -7,8 +7,6 @@
 #include <type_traits>
 #include <cassert>
 
-#include <Windows.h>
-
 #include "Vec2.h"
 #include "Color.h"
 #include "Event.h"

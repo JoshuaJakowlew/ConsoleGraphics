@@ -1,10 +1,4 @@
-﻿#include <iostream>
-#include <string>
-#include <chrono>
-
-#include "RenderConsole.h"
-#include "Color.h"
-#include "bitmap_image.hpp"
+﻿#include "RenderConsole.h"
 
 int main()
 {

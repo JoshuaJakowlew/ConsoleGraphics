@@ -1,8 +1,6 @@
 #ifndef RENDER_CONSOLE_H
 #define RENDER_CONSOLE_H
 
-#include <Windows.h>
-
 #include "Console.h"
 #include "RenderSurface.h"
 
