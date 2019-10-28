@@ -158,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="bitmap_image.hpp" />
     <ClInclude Include="cg.h" />
+    <ClInclude Include="Clock.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Event.h" />

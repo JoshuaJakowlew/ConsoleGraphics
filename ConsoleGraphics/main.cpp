@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include "cg.h"
+#include "Vec2.h"
 
 int main()
 {
@@ -17,13 +18,14 @@ int main()
 
 	cg::Texture tex{ "assets/sprite.bmp", palette };
 
-	cg::Sprite sprite{ tex};
+	cg::Sprite sprite{ tex };
 	sprite.setPos({ 25, 25 });
 	sprite.setTransparent(true);
 
 	cg::Sprite sprite1{ tex, { 4, 4 }, { 12, 12 } };
 	sprite1.setPos({ 25, 25 });
 	sprite1.setTransparent(true, sprite1[{5, 0}]);
+	auto speed = 25.f;
 
 	cg::RenderConsole console{ { 200, 100 }, { 4, 4 } };
 	if (!console.isOpen())
@@ -31,16 +33,21 @@ int main()
 
 	console.setPalette(palette);
 
+	cg::Clock clock;
+
 	while (console.isOpen())
 	{
 		cg::Event e = {};
 		while (console.pollEvent(e))
 		{
 			if (e.type == cg::EventType::KeyPressed || e.type == cg::EventType::MouseClick)
-				console.close();
+				speed = -speed;
 			if (e.type == cg::EventType::MouseMove)
 				sprite.setPos({ e.mouseMove.position.X, e.mouseMove.position.Y });
 		}
+
+		auto elapsed = clock.restart();
+		sprite1.move(cg::Vec2f{ speed * elapsed, 0.f });
 
 		console.fill(CHAR_INFO{ L' ', 0x00 });
 

@@ -22,6 +22,7 @@ namespace cg
 
 		inline auto setPos(Vec2i pos) noexcept -> void;
 		inline auto setOrigin(Vec2i origin) noexcept -> void;
+		inline auto move(Vec2f offset) noexcept -> void;
 		inline auto move(Vec2i offset) noexcept -> void;
 
 		inline auto isTransparent() const noexcept -> bool;
@@ -90,6 +91,18 @@ namespace cg
 	inline auto Sprite::setOrigin(Vec2i origin) noexcept -> void
 	{
 		m_origin = origin;
+	}
+
+	inline auto Sprite::move(Vec2f offset) noexcept -> void
+	{
+		static Vec2f movement = { 0.f, 0.f };
+		movement += offset;
+
+		move(static_cast<Vec2i>(movement));
+
+		movement -= static_cast<Vec2f>(
+			static_cast<Vec2i>(movement)
+		);
 	}
 
 	inline auto Sprite::move(Vec2i offset) noexcept -> void
