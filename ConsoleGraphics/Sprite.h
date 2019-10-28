@@ -20,6 +20,10 @@ namespace cg
 		[[nodiscard]] inline auto at(Vec2u pos) const noexcept -> CHAR_INFO;
 		[[nodiscard]] inline auto at(unsigned x, unsigned y) const noexcept -> CHAR_INFO;
 
+		inline auto setTexture(const Texture* texture, Vec2u left, Vec2u right) noexcept -> void;
+		inline auto setTexture(const Texture* texture) noexcept -> void;
+		inline auto setTextureRect(Vec2u left, Vec2u right) noexcept -> void;
+
 		inline auto setPos(Vec2i pos) noexcept -> void;
 		inline auto setOrigin(Vec2i origin) noexcept -> void;
 		inline auto move(Vec2f offset) noexcept -> void;
@@ -31,6 +35,7 @@ namespace cg
 		inline auto getTransparentColor() const noexcept -> CHAR_INFO;
 	private:
 		Texture::Rect m_textureRect;
+		const Texture* m_texture;
 		Vec2i m_pos = { 0, 0 };
 		Vec2i m_origin = { 0, 0 };
 		CHAR_INFO m_transparentColor;
@@ -41,11 +46,9 @@ namespace cg
 		Sprite(texture, { 0, 0 }, texture.getSize())
 	{}
 
-	inline Sprite::Sprite(const Texture& texture, Vec2u left, Vec2u right) noexcept :
-		m_textureRect{ texture.getRect(left, right) }
+	inline Sprite::Sprite(const Texture& texture, Vec2u left, Vec2u right) noexcept
 	{
-		const Vec2i size(m_textureRect.x, m_textureRect.y);
-		m_origin = size / 2;
+		setTexture(&texture, std::move(left), std::move(right));
 	}
 
 	inline auto cg::Sprite::getPos() const noexcept -> Vec2i
@@ -81,6 +84,24 @@ namespace cg
 	inline auto Sprite::at(unsigned x, unsigned y) const noexcept -> CHAR_INFO
 	{
 		return m_textureRect.at(x, y);
+	}
+
+	inline auto Sprite::setTexture(const Texture* texture, Vec2u left, Vec2u right) noexcept -> void
+	{
+		setTexture(texture);
+		setTextureRect(std::move(left), std::move(right));
+	}
+
+	inline auto Sprite::setTexture(const Texture* texture) noexcept -> void
+	{
+		m_texture = texture;
+	}
+
+	inline auto Sprite::setTextureRect(Vec2u left, Vec2u right) noexcept -> void
+	{
+		m_textureRect = m_texture->getRect(std::move(left), std::move(right));
+		const Vec2i size(m_textureRect.x, m_textureRect.y);
+		m_origin = size / 2;
 	}
 
 	inline auto Sprite::setPos(Vec2i pos) noexcept -> void

@@ -40,7 +40,7 @@ namespace cg
 		[[nodiscard]] inline CHAR_INFO& getCell(Vec2i coords);
 		[[nodiscard]] inline const CHAR_INFO * getLine(int line);
 		[[nodiscard]] inline const CHAR_INFO * getBuffer() const;
-		[[nodiscard]] inline const Rect getRect(Vec2u left, Vec2u right) const;
+		[[nodiscard]] inline Rect getRect(Vec2u left, Vec2u right) const;
 
 		inline void setPalette(const Palette& palette);
 		[[nodiscard]] bool loadFromBitmap(std::string_view path);	
@@ -99,7 +99,7 @@ namespace cg
 		return &m_data[0];
 	}
 
-	inline const Texture::Rect Texture::getRect(Vec2u left, Vec2u right) const
+	inline Texture::Rect Texture::getRect(Vec2u left, Vec2u right) const
 	{
 		auto offset = m_size.x * left.y + left.x;
 		auto line = &m_data[0] + offset;

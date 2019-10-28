@@ -16,15 +16,19 @@ int main()
 			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
 	};
 
-	cg::Texture tex{ "assets/sprite.bmp", palette };
+	cg::Texture bgTex{ "assets/bg.bmp", palette };
+	cg::Texture marioTex{ "assets/sprite.bmp", palette };
 
-	cg::Sprite sprite{ tex };
+	cg::Sprite bg{ bgTex };
+	bg.setOrigin({ 0, 0 });
+
+	cg::Sprite sprite{ marioTex };
 	sprite.setPos({ 25, 25 });
 	sprite.setTransparent(true);
 
-	cg::Sprite sprite1{ tex, { 4, 4 }, { 12, 12 } };
+	cg::Sprite sprite1{ marioTex, { 0, 0 }, { 15, 7 } };
 	sprite1.setPos({ 25, 25 });
-	sprite1.setTransparent(true, sprite1[{5, 0}]);
+	sprite1.setTransparent(true);
 	auto speed = 25.f;
 
 	cg::RenderConsole console{ { 200, 100 }, { 4, 4 } };
@@ -51,6 +55,7 @@ int main()
 
 		console.fill(CHAR_INFO{ L' ', 0x00 });
 
+		console.drawSprite(bg);
 		console.drawSprite(sprite1);
 		console.drawSprite(sprite);
 

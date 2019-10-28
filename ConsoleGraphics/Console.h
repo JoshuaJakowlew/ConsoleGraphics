@@ -84,10 +84,8 @@ namespace cg
 	template <typename T>
 	bool Console<T>::pollEvent(Event& e)
 	{
-		[[unlikely]]
 		if (!sendEvent(e))
 		{
-			[[unlikely]]
 			if (!getEvents())
 				return false;
 
@@ -163,7 +161,6 @@ namespace cg
 	template<typename T>
 	bool Console<T>::sendEvent(Event& e) noexcept
 	{
-		[[unlikely]]
 		if (m_events.size())
 		{
 			e = translateEvent(m_events.front());
@@ -253,6 +250,7 @@ namespace cg
 		assert(INVALID_HANDLE_VALUE != m_handles.in);
 
 		DWORD nEvents;
+		[[unlikely]]
 		if (!::GetNumberOfConsoleInputEvents(m_handles.in, &nEvents))
 			return false;
 
