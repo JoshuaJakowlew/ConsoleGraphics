@@ -110,20 +110,18 @@ namespace cg
 		};
 
 		const auto start = sprite.getActualPos();
-		const auto end = start + sprite.getSize();
+		const auto rect = sprite.getSize();
 
-		for (auto y = start.y; y < end.y; ++y)
+		for (auto y = 0u; y < rect.y; ++y)
 		{
-			const auto offset = sprite.getSize().x * (y - start.y);
-			const auto line_offset = sprite.getData() + offset;
-			
-			for (auto x = start.x; x < end.x; ++x)
+			for (auto x = 0u; x < rect.x; ++x)
 			{
-				const auto cellptr = line_offset + (x - start.x);
-				if (sprite.isTransparent() && cellEq(*cellptr, sprite.getTransparentColor()))
+				const auto cell = sprite.at(x, y);
+				if (sprite.isTransparent() && cellEq(cell, sprite.getTransparentColor()))
 					continue;
 
-				putCell(x, y, *cellptr);
+				const auto pos = sprite.getActualPos();
+				putCell(pos.x + x, pos.y + y, cell);
 			}
 		}
 	}

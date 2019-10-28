@@ -17,13 +17,13 @@ int main()
 
 	cg::Texture tex{ "assets/sprite.bmp", palette };
 
-	cg::Sprite sprite{ tex };
+	cg::Sprite sprite{ tex};
 	sprite.setPos({ 25, 25 });
 	sprite.setTransparent(true);
 
-	cg::Sprite sprite1{ tex };
+	cg::Sprite sprite1{ tex, { 4, 4 }, { 12, 12 } };
 	sprite1.setPos({ 25, 25 });
-	sprite1.setTransparent(true, *(sprite1.getData() + 5));
+	sprite1.setTransparent(true, sprite1[{5, 0}]);
 
 	cg::RenderConsole console{ { 200, 100 }, { 4, 4 } };
 	if (!console.isOpen())

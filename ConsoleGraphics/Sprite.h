@@ -9,12 +9,16 @@ namespace cg
 	{
 	public:
 		Sprite(const Texture& texture) noexcept;
+		Sprite(const Texture& texture, Vec2u left, Vec2u right) noexcept;
 
 		[[nodiscard]] inline auto getPos() const noexcept -> Vec2i;
 		[[nodiscard]] inline auto getActualPos() const noexcept -> Vec2i;
-		[[nodiscard]] inline auto getSize() const noexcept -> Vec2i;
+		[[nodiscard]] inline auto getSize() const noexcept -> Vec2u;
 		[[nodiscard]] inline auto getOrigin() const noexcept -> Vec2i;
-		[[nodiscard]] inline auto getData() const noexcept -> const CHAR_INFO*;
+
+		[[nodiscard]] inline auto operator[](Vec2u pos) const noexcept -> CHAR_INFO;
+		[[nodiscard]] inline auto at(Vec2u pos) const noexcept -> CHAR_INFO;
+		[[nodiscard]] inline auto at(unsigned x, unsigned y) const noexcept -> CHAR_INFO;
 
 		inline auto setPos(Vec2i pos) noexcept -> void;
 		inline auto setOrigin(Vec2i origin) noexcept -> void;
@@ -25,19 +29,23 @@ namespace cg
 		inline auto setTransparent(bool transparent, CHAR_INFO color) noexcept -> void;
 		inline auto getTransparentColor() const noexcept -> CHAR_INFO;
 	private:
+		Texture::Rect m_textureRect;
 		Vec2i m_pos = { 0, 0 };
-		Vec2i m_size;
-		Vec2i m_origin;
-		bool m_transparent = false;
+		Vec2i m_origin = { 0, 0 };
 		CHAR_INFO m_transparentColor;
-		const CHAR_INFO* m_data = nullptr;
+		bool m_transparent = false;
 	};
 
 	inline Sprite::Sprite(const Texture & texture) noexcept :
-		m_size{ texture.getSize() },
-		m_data{ texture.getBuffer() },
-		m_origin{ m_size / 2 }
+		Sprite(texture, { 0, 0 }, texture.getSize())
 	{}
+
+	inline Sprite::Sprite(const Texture& texture, Vec2u left, Vec2u right) noexcept :
+		m_textureRect{ texture.getRect(left, right) }
+	{
+		const Vec2i size(m_textureRect.x, m_textureRect.y);
+		m_origin = size / 2;
+	}
 
 	inline auto cg::Sprite::getPos() const noexcept -> Vec2i
 	{
@@ -49,9 +57,9 @@ namespace cg
 		return m_pos - m_origin;
 	}
 
-	inline auto Sprite::getSize() const noexcept -> Vec2i
+	inline auto Sprite::getSize() const noexcept -> Vec2u
 	{
-		return m_size;
+		return { m_textureRect.x, m_textureRect.y };
 	}
 
 	inline auto Sprite::getOrigin() const noexcept -> Vec2i
@@ -59,9 +67,19 @@ namespace cg
 		return m_origin;
 	}
 
-	inline auto Sprite::getData() const noexcept -> const CHAR_INFO*
+	inline auto Sprite::operator[](Vec2u pos) const noexcept -> CHAR_INFO
 	{
-		return m_data;
+		return at(pos.x, pos.y);
+	}
+
+	inline auto Sprite::at(Vec2u pos) const noexcept -> CHAR_INFO
+	{
+		return at(pos.x, pos.y);
+	}
+
+	inline auto Sprite::at(unsigned x, unsigned y) const noexcept -> CHAR_INFO
+	{
+		return m_textureRect.at(x, y);
 	}
 
 	inline auto Sprite::setPos(Vec2i pos) noexcept -> void
@@ -86,7 +104,7 @@ namespace cg
 
 	inline auto Sprite::setTransparent(bool transparent) noexcept -> void
 	{
-		setTransparent(transparent, *m_data);
+		setTransparent(transparent, *m_textureRect.data);
 	}
 
 	inline auto Sprite::setTransparent(bool transparent, CHAR_INFO color) noexcept -> void

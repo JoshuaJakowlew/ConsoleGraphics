@@ -19,6 +19,19 @@ namespace cg
 	class Texture
 	{
 	public:
+		struct Rect
+		{
+			const CHAR_INFO* data;
+			unsigned x;
+			unsigned y;
+			unsigned offset;
+
+			CHAR_INFO at(unsigned x, unsigned y) const noexcept
+			{
+				return *(data + offset * y + x);
+			}
+		};
+	public:
 		inline Texture(const Palette& palette = palette::defaultPalette);
 		inline Texture(std::string_view path, const Palette& palette = palette::defaultPalette);
 
@@ -27,6 +40,7 @@ namespace cg
 		[[nodiscard]] inline CHAR_INFO& getCell(Vec2i coords);
 		[[nodiscard]] inline const CHAR_INFO * getLine(int line);
 		[[nodiscard]] inline const CHAR_INFO * getBuffer() const;
+		[[nodiscard]] inline const Rect getRect(Vec2u left, Vec2u right) const;
 
 		inline void setPalette(const Palette& palette);
 		[[nodiscard]] bool loadFromBitmap(std::string_view path);	
@@ -83,6 +97,19 @@ namespace cg
 	{
 		assert(&m_data[0] != nullptr);
 		return &m_data[0];
+	}
+
+	inline const Texture::Rect Texture::getRect(Vec2u left, Vec2u right) const
+	{
+		auto offset = m_size.x * left.y + left.x;
+		auto line = &m_data[0] + offset;
+
+		return {
+			line,
+			right.x - left.x,
+			right.y - left.y,
+			m_size.x
+		};
 	}
 
 	void Texture::setPalette(const Palette& palette)
