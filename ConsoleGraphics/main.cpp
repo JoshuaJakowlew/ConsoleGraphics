@@ -38,12 +38,14 @@ int main()
 
 	cg::RenderSurface render{ 200, 100 };
 
+	cg::EventManager emgr{ console.getInputHandle() };
+
 	cg::Clock clock;
 
 	while (console.isOpen())
 	{
 		cg::Event e = {};
-		while (console.pollEvent(e))
+		while (emgr.pollEvent(e))
 		{
 			if (e.type == cg::EventType::KeyPressed || e.type == cg::EventType::MouseClick)
 				speed = -speed;

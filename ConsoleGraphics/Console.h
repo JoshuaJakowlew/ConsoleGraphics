@@ -9,7 +9,6 @@
 
 #include "Vec2.h"
 #include "Color.h"
-#include "Event.h"
 
 namespace cg
 {
@@ -21,12 +20,13 @@ namespace cg
 		Console(const Console&) = delete;
 		Console& operator=(const Console&) = delete;
 
-		[[nodiscard]] bool pollEvent(Event& e);
 		[[nodiscard]] bool display(const CHAR_INFO* buffer) noexcept;
 		[[nodiscard]] bool close() noexcept;
 
 		[[nodiscard]] bool isOpen() const noexcept;
 
+		[[nodiscard]] inline const HANDLE getInputHandle() const noexcept;
+		[[nodiscard]] inline const HANDLE getOutputHandle() const noexcept;
 		[[nodiscard]] inline Vec2u getResolution() const noexcept;
 		[[nodiscard]] inline Vec2u getMaxResolution() const noexcept;
 		
@@ -49,14 +49,6 @@ namespace cg
 
 		Palette m_palette;
 
-		std::queue<INPUT_RECORD> m_events;
-	protected:
-		[[nodiscard]] bool sendEvent(Event& e) noexcept;
-		[[nodiscard]] Event translateEvent(const INPUT_RECORD& e) noexcept;
-		[[nodiscard]] Event translateKeyEvent(const INPUT_RECORD& e) noexcept;
-		[[nodiscard]] Event translateMouseEvent(const INPUT_RECORD& e) noexcept;
-		[[nodiscard]] bool getEvents();
-
 		[[nodiscard]] bool create() noexcept;
 		[[nodiscard]] Vec2u getMaxScreenBufferSize() noexcept;
 		[[nodiscard]] bool getStdHandles() noexcept;
@@ -77,19 +69,6 @@ namespace cg
 		m_fontSize{ std::move(font_size) }
 	{
 		m_isOpen = create();
-	}
-
-	bool Console::pollEvent(Event& e)
-	{
-		if (!sendEvent(e))
-		{
-			if (!getEvents())
-				return false;
-
-			return sendEvent(e);
-		}
-
-		return true;
 	}
 
 	bool Console::display(const CHAR_INFO* buffer) noexcept
@@ -146,6 +125,16 @@ namespace cg
 		return m_isOpen;
 	}
 
+	inline const HANDLE Console::getInputHandle() const noexcept
+	{
+		return m_handles.in;
+	}
+
+	inline const HANDLE Console::getOutputHandle() const noexcept
+	{
+		return m_handles.out;
+	}
+
 	inline Vec2u Console::getResolution() const noexcept
 	{
 		return m_resolution;
@@ -177,119 +166,6 @@ namespace cg
 		++csbi.srWindow.Right;
 		
 		return ::SetConsoleScreenBufferInfoEx(m_handles.out, &csbi);
-	}
-
-	bool Console::sendEvent(Event& e) noexcept
-	{
-		if (m_events.size())
-		{
-			e = translateEvent(m_events.front());
-			m_events.pop();
-
-			return true;
-		}
-
-		return false;
-	}
-
-	Event Console::translateEvent(const INPUT_RECORD& e) noexcept
-	{
-		Event event = {};
-
-		if (KEY_EVENT == e.EventType)
-			return translateKeyEvent(e);
-		else if (MOUSE_EVENT == e.EventType)
-			return translateMouseEvent(e);
-		else
-		{
-			event.type = EventType::Raw;
-			event.raw = RawEvent{ e };
-		}
-
-		return event;
-	}
-
-	Event Console::translateKeyEvent(const INPUT_RECORD& e) noexcept
-	{
-		Event event = {};
-		if (e.Event.KeyEvent.bKeyDown)
-			event.type = EventType::KeyPressed;
-		else
-			event.type = EventType::KeyReleased;
-
-		KeyEvent key = {};
-		key.key = e.Event.KeyEvent.uChar.UnicodeChar;
-		key.scanCode = e.Event.KeyEvent.wVirtualScanCode;
-		key.controlKeyState = e.Event.KeyEvent.dwControlKeyState;
-
-		event.key = key;
-
-		return event;
-	}
-
-	// TODO: Check all cases
-	Event Console::translateMouseEvent(const INPUT_RECORD& e) noexcept
-	{
-		Event event = {};
-
-		const auto buttonState = e.Event.MouseEvent.dwButtonState;
-		if (buttonState)
-		{
-			event.type = EventType::MouseClick;
-			
-			MouseClickEvent click;
-			if (FROM_LEFT_1ST_BUTTON_PRESSED & buttonState)
-				click.button = MouseButton::Left;
-			else if (RIGHTMOST_BUTTON_PRESSED & buttonState)
-				click.button = MouseButton::Right;
-
-			click.position = e.Event.MouseEvent.dwMousePosition;
-			click.doubleClick = DOUBLE_CLICK & e.Event.MouseEvent.dwEventFlags;
-			event.mouseClick = click;
-		}
-		else if (MOUSE_MOVED & e.Event.MouseEvent.dwEventFlags)
-		{
-			event.type = EventType::MouseMove;
-
-			MouseMoveEvent move;
-			move.position = e.Event.MouseEvent.dwMousePosition;
-
-			event.mouseMove = move;
-		}
-
-
-		return event;
-	}
-
-	bool Console::getEvents()
-	{
-		assert(INVALID_HANDLE_VALUE != m_handles.in);
-
-		DWORD nEvents;
-		[[unlikely]]
-		if (!::GetNumberOfConsoleInputEvents(m_handles.in, &nEvents))
-			return false;
-
-		if (nEvents > 0)
-		{
-			std::vector<INPUT_RECORD> events(nEvents);
-			DWORD eventsRead;
-
-			[[unlikely]]
-			if (!::ReadConsoleInput(m_handles.in, events.data(), nEvents, &eventsRead))
-				return false;
-
-			[[unlikely]]
-			if (0 == eventsRead)
-				return false;
-
-			for (auto e : events)
-				m_events.push(e);
-
-			return true;
-		}
-
-		return false;
 	}
 
 	bool Console::create() noexcept

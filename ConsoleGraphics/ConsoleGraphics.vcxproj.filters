@@ -68,5 +68,8 @@
     <ClInclude Include="Clock.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

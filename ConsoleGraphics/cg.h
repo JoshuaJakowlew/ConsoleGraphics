@@ -3,6 +3,7 @@
 
 #include "Console.h"
 #include "RenderSurface.h"
+#include "EventManager.h"
 #include "Clock.h"
 
 #endif

@@ -165,6 +165,7 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="EventManager.h" />
     <ClInclude Include="RenderSurface.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
