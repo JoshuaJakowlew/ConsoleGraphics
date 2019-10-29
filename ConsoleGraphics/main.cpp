@@ -4,6 +4,8 @@
 
 #include "cg.h"
 
+using namespace std::literals;
+
 class TestApp : public cg::Application
 {
 public:
@@ -56,6 +58,14 @@ void TestApp::setup() noexcept
 void TestApp::update(float dt) noexcept
 {
 	sprite1.move(cg::Vec2f{ speed * dt, 0.f });
+
+	static auto frame = 0;
+	frame++;
+	static auto time = 0.f;
+	time += dt;
+
+	std::wstring title = L"Frame time: "s + std::to_wstring(dt) + L", FPS: "s + std::to_wstring(1.f / dt) + L" Avg FPS: "s + std::to_wstring(frame / time);
+	m_console.setTitle(title);
 }
 
 void TestApp::processEvent(const cg::Event& e) noexcept

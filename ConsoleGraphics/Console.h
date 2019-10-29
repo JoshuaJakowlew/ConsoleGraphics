@@ -31,6 +31,7 @@ namespace cg
 		[[nodiscard]] inline Vec2u getMaxResolution() const noexcept;
 		
 		[[nodiscard]] bool setPalette(const cg::Palette& palette) noexcept;
+		[[nodiscard]] bool setTitle(std::wstring_view title);
 
 	protected:
 		struct Handles

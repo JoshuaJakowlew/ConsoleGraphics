@@ -81,6 +81,11 @@ namespace cg
 		return ::SetConsoleScreenBufferInfoEx(m_handles.out, &csbi);
 	}
 
+	bool Console::setTitle(std::wstring_view title)
+	{
+		return ::SetConsoleTitle(title.data());
+	}
+
 	bool Console::create() noexcept
 	{
 		[[unlikely]]
