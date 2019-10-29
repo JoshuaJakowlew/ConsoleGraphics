@@ -30,9 +30,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RenderConsole.cpp">
-      <Filter>Source Files\Core\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="RenderSurface.cpp">
       <Filter>Source Files\Core\Graphics</Filter>
     </ClCompile>
@@ -51,9 +48,6 @@
       <Filter>Header Files\Core\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Event.h">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderConsole.h">
       <Filter>Header Files\Core\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="RenderSurface.h">

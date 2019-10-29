@@ -31,11 +31,12 @@ int main()
 	sprite1.setTransparent(true);
 	auto speed = 25.f;
 
-	cg::RenderConsole console{ { 200, 100 }, { 4, 4 } };
+	cg::Console console{ { 200, 100 }, { 4, 4 } };
 	if (!console.isOpen())
 		MessageBoxA(0, "Error: can't create console", "Error", MB_ICONERROR);
-
 	console.setPalette(palette);
+
+	cg::RenderSurface render{ 200, 100 };
 
 	cg::Clock clock;
 
@@ -53,13 +54,12 @@ int main()
 		auto elapsed = clock.restart();
 		sprite1.move(cg::Vec2f{ speed * elapsed, 0.f });
 
-		console.fill(CHAR_INFO{ L' ', 0x00 });
+		render.fill(CHAR_INFO{ L' ', 0x00 });
+		render.drawSprite(bg);
+		render.drawSprite(sprite1);
+		render.drawSprite(sprite);
 
-		console.drawSprite(bg);
-		console.drawSprite(sprite1);
-		console.drawSprite(sprite);
-
-		if (!console.display())
+		if (!console.display(render.getBuffer()))
 			break;
 	}
 }

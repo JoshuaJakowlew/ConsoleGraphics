@@ -13,7 +13,6 @@
 
 namespace cg
 {
-	template <typename T>
 	class Console
 	{
 	public:
@@ -23,7 +22,7 @@ namespace cg
 		Console& operator=(const Console&) = delete;
 
 		[[nodiscard]] bool pollEvent(Event& e);
-		[[nodiscard]] bool display() noexcept;
+		[[nodiscard]] bool display(const CHAR_INFO* buffer) noexcept;
 		[[nodiscard]] bool close() noexcept;
 
 		[[nodiscard]] bool isOpen() const noexcept;
@@ -73,16 +72,14 @@ namespace cg
 
 namespace cg
 {
-	template <typename T>
-	Console<T>::Console(Vec2u resolution, Vec2u font_size) noexcept :
+	Console::Console(Vec2u resolution, Vec2u font_size) noexcept :
 		m_resolution{ std::move(resolution) },
 		m_fontSize{ std::move(font_size) }
 	{
 		m_isOpen = create();
 	}
 
-	template <typename T>
-	bool Console<T>::pollEvent(Event& e)
+	bool Console::pollEvent(Event& e)
 	{
 		if (!sendEvent(e))
 		{
@@ -95,15 +92,43 @@ namespace cg
 		return true;
 	}
 
-	template <typename T>
-	bool Console<T>::display() noexcept
+	bool Console::display(const CHAR_INFO* buffer) noexcept
 	{
-		static_assert(std::is_same_v<T*, decltype(this)>);
-		return static_cast<T*>(this)->display();
+		assert(buffer);
+		assert(m_resolution.x <= SHRT_MAX - 1 && m_resolution.y <= SHRT_MAX - 1);
+		assert(m_handles.out != INVALID_HANDLE_VALUE);
+
+		if (!buffer)
+			return false;
+
+		const COORD screenSize = {
+			static_cast<SHORT>(m_resolution.x),
+			static_cast<SHORT>(m_resolution.y)
+		};
+
+		const SMALL_RECT writeRegion = {
+			0,
+			0,
+			static_cast<SHORT>(m_resolution.x - 1),
+			static_cast<SHORT>(m_resolution.y - 1)
+		};
+
+		if (!m_isOpen)
+			return false;
+
+		auto writtenRegion = writeRegion;
+
+		const auto writeResult = ::WriteConsoleOutputW(m_handles.out, buffer, screenSize, { 0, 0 }, &writtenRegion);
+
+		return
+			(writtenRegion.Left == writeRegion.Left) &
+			(writtenRegion.Right == writeRegion.Right) &
+			(writtenRegion.Bottom == writeRegion.Bottom) &
+			(writtenRegion.Top == writeRegion.Top) &
+			writeResult;
 	}
 
-	template<typename T>
-	bool Console<T>::close() noexcept
+	bool Console::close() noexcept
 	{
 		if(!::SetConsoleActiveScreenBuffer(m_handles.original))
 			return false;
@@ -116,26 +141,22 @@ namespace cg
 		return true;
 	}
 
-	template<typename T>
-	inline bool Console<T>::isOpen() const noexcept
+	inline bool Console::isOpen() const noexcept
 	{
 		return m_isOpen;
 	}
 
-	template <typename T>
-	inline Vec2u Console<T>::getResolution() const noexcept
+	inline Vec2u Console::getResolution() const noexcept
 	{
 		return m_resolution;
 	}
 
-	template <typename T>
-	inline Vec2u Console<T>::getMaxResolution() const noexcept
+	inline Vec2u Console::getMaxResolution() const noexcept
 	{
 		return m_maxResolution;
 	}
 
-	template<typename T>
-	bool Console<T>::setPalette(const cg::Palette& palette) noexcept
+	bool Console::setPalette(const cg::Palette& palette) noexcept
 	{
 		CONSOLE_SCREEN_BUFFER_INFOEX csbi;
 		csbi.cbSize = sizeof(CONSOLE_SCREEN_BUFFER_INFOEX);
@@ -158,8 +179,7 @@ namespace cg
 		return ::SetConsoleScreenBufferInfoEx(m_handles.out, &csbi);
 	}
 
-	template<typename T>
-	bool Console<T>::sendEvent(Event& e) noexcept
+	bool Console::sendEvent(Event& e) noexcept
 	{
 		if (m_events.size())
 		{
@@ -172,8 +192,7 @@ namespace cg
 		return false;
 	}
 
-	template<typename T>
-	Event Console<T>::translateEvent(const INPUT_RECORD& e) noexcept
+	Event Console::translateEvent(const INPUT_RECORD& e) noexcept
 	{
 		Event event = {};
 
@@ -190,8 +209,7 @@ namespace cg
 		return event;
 	}
 
-	template<typename T>
-	Event Console<T>::translateKeyEvent(const INPUT_RECORD& e) noexcept
+	Event Console::translateKeyEvent(const INPUT_RECORD& e) noexcept
 	{
 		Event event = {};
 		if (e.Event.KeyEvent.bKeyDown)
@@ -210,8 +228,7 @@ namespace cg
 	}
 
 	// TODO: Check all cases
-	template<typename T>
-	Event Console<T>::translateMouseEvent(const INPUT_RECORD& e) noexcept
+	Event Console::translateMouseEvent(const INPUT_RECORD& e) noexcept
 	{
 		Event event = {};
 
@@ -244,8 +261,7 @@ namespace cg
 		return event;
 	}
 
-	template<typename T>
-	bool Console<T>::getEvents()
+	bool Console::getEvents()
 	{
 		assert(INVALID_HANDLE_VALUE != m_handles.in);
 
@@ -276,8 +292,7 @@ namespace cg
 		return false;
 	}
 
-	template <typename T>
-	bool Console<T>::create() noexcept
+	bool Console::create() noexcept
 	{
 		[[unlikely]]
 		if (!getStdHandles())
@@ -312,8 +327,7 @@ namespace cg
 		return true; // Everything is OK
 	}
 
-	template <typename T>
-	Vec2u Console<T>::getMaxScreenBufferSize() noexcept
+	Vec2u Console::getMaxScreenBufferSize() noexcept
 	{
 		assert(m_handles.out != INVALID_HANDLE_VALUE);
 
@@ -329,8 +343,7 @@ namespace cg
 		};
 	}
 
-	template <typename T>
-	bool Console<T>::getStdHandles() noexcept
+	bool Console::getStdHandles() noexcept
 	{
 		const auto original_handle = ::GetStdHandle(STD_OUTPUT_HANDLE);
 		const auto input_handle = ::GetStdHandle(STD_INPUT_HANDLE);
@@ -345,8 +358,7 @@ namespace cg
 		return true;
 	}
 
-	template <typename T>
-	bool Console<T>::createScreenBuffer() noexcept
+	bool Console::createScreenBuffer() noexcept
 	{
 		const auto buffer_handle = ::CreateConsoleScreenBuffer(
 			/* dwDesiredAccess      */ GENERIC_READ | GENERIC_WRITE,
@@ -364,8 +376,7 @@ namespace cg
 		return true;
 	}
 
-	template <typename T>
-	bool Console<T>::configureInput() noexcept
+	bool Console::configureInput() noexcept
 	{
 		DWORD dwMode = 0;
 		if (!::GetConsoleMode(m_handles.in, &dwMode))
@@ -380,8 +391,7 @@ namespace cg
 		return true; // everything is OK
 	}
 
-	template <typename T>
-	bool Console<T>::configureOutput() noexcept
+	bool Console::configureOutput() noexcept
 	{
 		/*
 		// Enable ANSI escape codes
@@ -401,8 +411,7 @@ namespace cg
 		return true; // everything is OK
 	}
 
-	template <typename T>
-	bool Console<T>::assignScreenBuffer() noexcept
+	bool Console::assignScreenBuffer() noexcept
 	{
 		/*
 		*
@@ -480,8 +489,7 @@ namespace cg
 		return true; // everything is OK
 	}
 
-	template <typename T>
-	bool Console<T>::disableCursor() noexcept
+	bool Console::disableCursor() noexcept
 	{
 		assert(m_handles.out != INVALID_HANDLE_VALUE);
 
@@ -493,8 +501,7 @@ namespace cg
 		return ::SetConsoleCursorInfo(m_handles.out, &cursor_info);
 	}
 
-	template <typename T>
-	bool Console<T>::setFontSize(Vec2u fontSize) noexcept
+	bool Console::setFontSize(Vec2u fontSize) noexcept
 	{
 		assert(fontSize.x <= SHRT_MAX && fontSize.y <= SHRT_MAX);
 		assert(m_handles.out != INVALID_HANDLE_VALUE);

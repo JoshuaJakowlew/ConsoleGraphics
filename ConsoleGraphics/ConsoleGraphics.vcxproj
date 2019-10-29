@@ -155,7 +155,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="RenderConsole.cpp" />
     <ClCompile Include="RenderSurface.cpp" />
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
@@ -166,7 +165,6 @@
     <ClInclude Include="Color.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="Event.h" />
-    <ClInclude Include="RenderConsole.h" />
     <ClInclude Include="RenderSurface.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
