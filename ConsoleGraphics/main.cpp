@@ -3,13 +3,19 @@
 #include <chrono>
 
 #include "cg.h"
-#include "Vec2.h"
 
-int main()
+class TestApp : public cg::Application
 {
-	using namespace std;
+public:
+	using Application::Application;
 
-	cg::Palette palette{
+	void setup() noexcept override;
+	void processEvent(const cg::Event& e) noexcept override;
+	void update(float dt) noexcept override;
+	void draw() noexcept override;
+
+private:
+	constexpr static cg::Palette palette = {
 			RGB(53, 14, 88), RGB(0, 0, 128), RGB(0, 128, 0), RGB(0, 128, 128),
 			RGB(128, 0, 0), RGB(128, 0, 128), RGB(128, 128, 0), RGB(192, 192, 192),
 			RGB(128, 128, 128), RGB(0, 0, 255), RGB(0, 255, 0), RGB(0, 255, 255),
@@ -20,48 +26,49 @@ int main()
 	cg::Texture marioTex{ "assets/sprite.bmp", palette };
 
 	cg::Sprite bg{ bgTex };
+	cg::Sprite sprite{ marioTex };
+	cg::Sprite sprite1{ marioTex, { 0, 0 }, { 15, 7 } };
+
+	float speed = 25.f;
+};
+
+int main()
+{
+	using namespace std;
+
+	TestApp app{ { 200, 100 }, { 4, 4 } };
+	app.start();
+}
+
+void TestApp::setup() noexcept
+{
+	m_console.setPalette(palette);
+
 	bg.setOrigin({ 0, 0 });
 
-	cg::Sprite sprite{ marioTex };
 	sprite.setPos({ 25, 25 });
 	sprite.setTransparent(true);
 
-	cg::Sprite sprite1{ marioTex, { 0, 0 }, { 15, 7 } };
 	sprite1.setPos({ 25, 25 });
 	sprite1.setTransparent(true);
-	auto speed = 25.f;
+}
 
-	cg::Console console{ { 200, 100 }, { 4, 4 } };
-	if (!console.isOpen())
-		MessageBoxA(0, "Error: can't create console", "Error", MB_ICONERROR);
-	console.setPalette(palette);
+void TestApp::update(float dt) noexcept
+{
+	sprite1.move(cg::Vec2f{ speed * dt, 0.f });
+}
 
-	cg::RenderSurface render{ 200, 100 };
+void TestApp::processEvent(const cg::Event& e) noexcept
+{
+	if (e.type == cg::EventType::KeyPressed || e.type == cg::EventType::MouseClick)
+		speed = -speed;
+	if (e.type == cg::EventType::MouseMove)
+		sprite.setPos({ e.mouseMove.position.X, e.mouseMove.position.Y });
+}
 
-	cg::EventManager emgr{ console.getInputHandle() };
-
-	cg::Clock clock;
-
-	while (console.isOpen())
-	{
-		cg::Event e = {};
-		while (emgr.pollEvent(e))
-		{
-			if (e.type == cg::EventType::KeyPressed || e.type == cg::EventType::MouseClick)
-				speed = -speed;
-			if (e.type == cg::EventType::MouseMove)
-				sprite.setPos({ e.mouseMove.position.X, e.mouseMove.position.Y });
-		}
-
-		auto elapsed = clock.restart();
-		sprite1.move(cg::Vec2f{ speed * elapsed, 0.f });
-
-		render.fill(CHAR_INFO{ L' ', 0x00 });
-		render.drawSprite(bg);
-		render.drawSprite(sprite1);
-		render.drawSprite(sprite);
-
-		if (!console.display(render.getBuffer()))
-			break;
-	}
+void TestApp::draw() noexcept
+{
+	m_surface.drawSprite(bg);
+	m_surface.drawSprite(sprite1);
+	m_surface.drawSprite(sprite);
 }

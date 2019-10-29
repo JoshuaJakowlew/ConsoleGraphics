@@ -15,7 +15,7 @@ namespace cg
 	class Console
 	{
 	public:
-		explicit Console(Vec2u resolution, Vec2u font_size) noexcept;
+		Console(Vec2u resolution, Vec2u font_size) noexcept;
 
 		Console(const Console&) = delete;
 		Console& operator=(const Console&) = delete;
