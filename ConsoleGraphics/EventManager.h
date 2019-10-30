@@ -13,8 +13,9 @@ namespace cg
 	class EventManager
 	{
 	public:
-		EventManager() noexcept;
-		EventManager(HANDLE handle) noexcept;
+		using EventQueue = std::queue<INPUT_RECORD>;
+
+		EventManager(HANDLE handle = INVALID_HANDLE_VALUE) noexcept;
 
 		void setHandle(HANDLE handle) noexcept;
 		HANDLE getHandle() noexcept;
@@ -22,7 +23,7 @@ namespace cg
 		[[nodiscard]] bool pollEvent(Event& e);
 	private:
 		HANDLE m_handle;
-		std::queue<INPUT_RECORD> m_events;
+		EventQueue m_events;
 
 		[[nodiscard]] bool sendEvent(Event& e) noexcept;
 		[[nodiscard]] Event translateEvent(const INPUT_RECORD& e) noexcept;
@@ -30,10 +31,6 @@ namespace cg
 		[[nodiscard]] Event translateMouseEvent(const INPUT_RECORD& e) noexcept;
 		[[nodiscard]] bool getEvents();
 	};
-
-	inline EventManager::EventManager() noexcept
-	{
-	}
 
 	inline EventManager::EventManager(HANDLE handle) noexcept :
 		m_handle{ handle }

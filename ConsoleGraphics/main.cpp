@@ -78,6 +78,7 @@ void TestApp::processEvent(const cg::Event& e) noexcept
 
 void TestApp::draw() noexcept
 {
+	m_surface.fill(CHAR_INFO{ L' ', 0x00 });
 	m_surface.drawSprite(bg);
 	m_surface.drawSprite(sprite1);
 	m_surface.drawSprite(sprite);
