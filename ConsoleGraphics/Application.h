@@ -15,6 +15,8 @@ namespace cg
 
 		void start();
 	protected:
+		EventManager::EventQueue m_events{};
+
 		Console m_console;
 		RenderSurface m_surface;
 		EventManager m_eventManager;
@@ -24,6 +26,18 @@ namespace cg
 		virtual void processEvent(const Event& e) noexcept = 0;
 		virtual void update(float dt) noexcept = 0;
 		virtual void draw() noexcept = 0;
+	private:
+		enum class RenderState
+		{
+			DrawStart,
+			DrawEnd,
+			Displayed
+		};
+
+		RenderState m_surfaceReady = RenderState::DrawEnd;
+
+		void startDrawThread();
+		void runMainLoop();
 	};
 
 } // namespace cg
