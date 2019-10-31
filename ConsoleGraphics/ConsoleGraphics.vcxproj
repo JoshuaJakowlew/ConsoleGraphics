@@ -172,6 +172,7 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="EventManager.h" />
     <ClInclude Include="RenderSurface.h" />
+    <ClInclude Include="ReourceHolder.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Vec2.h" />

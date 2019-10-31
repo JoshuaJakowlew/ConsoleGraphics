@@ -2,5 +2,6 @@
 #define CONSOLE_GRAPHICS_H
 
 #include "Application.h"
+#include "ReourceHolder.h"
 
 #endif

@@ -24,12 +24,8 @@ private:
 			RGB(255, 0, 0), RGB(255, 0, 255), RGB(255, 255, 0), RGB(255, 255, 255)
 	};
 
-	cg::Texture bgTex{ "assets/bg.bmp", palette };
-	cg::Texture marioTex{ "assets/sprite.bmp", palette };
-
-	cg::Sprite bg{ bgTex };
-	cg::Sprite sprite{ marioTex };
-	cg::Sprite sprite1{ marioTex, { 0, 0 }, { 15, 7 } };
+	cg::ResourceHolder<std::string, cg::Texture> m_textures;
+	std::vector<cg::Sprite> m_sprites;
 
 	float speed = 25.f;
 };
@@ -46,18 +42,27 @@ void TestApp::setup() noexcept
 {
 	m_console.setPalette(palette);
 
-	bg.setOrigin({ 0, 0 });
+	m_textures.acquire("bg", { "assets/bg.bmp", palette });
+	m_textures.acquire("mario", { "assets/sprite.bmp", palette });
 
+	cg::Sprite bg{ m_textures["bg"] };
+	bg.setOrigin({ 0, 0 });
+	m_sprites.emplace_back(bg);
+
+	cg::Sprite sprite{ m_textures["mario"] };
 	sprite.setPos({ 25, 25 });
 	sprite.setTransparent(true);
+	m_sprites.emplace_back(sprite);
 
+	cg::Sprite sprite1{ m_textures["mario"], { 0, 0 }, { 15, 7 } };
 	sprite1.setPos({ 25, 25 });
 	sprite1.setTransparent(true);
+	m_sprites.emplace_back(sprite1);
 }
 
 void TestApp::update(float dt) noexcept
 {
-	sprite1.move(cg::Vec2f{ speed * dt, 0.f });
+	m_sprites[2].move(cg::Vec2f{ speed * dt, 0.f });
 
 	static auto frame = 0;
 	frame++;
@@ -73,12 +78,11 @@ void TestApp::processEvent(const cg::Event& e) noexcept
 	if (e.type == cg::EventType::KeyPressed || e.type == cg::EventType::MouseClick)
 		speed = -speed;
 	if (e.type == cg::EventType::MouseMove)
-		sprite.setPos({ e.mouseMove.position.X, e.mouseMove.position.Y });
+		m_sprites[1].setPos({ e.mouseMove.position.X, e.mouseMove.position.Y });
 }
 
 void TestApp::draw() noexcept
 {
-	m_surface.drawSprite(bg);
-	m_surface.drawSprite(sprite1);
-	m_surface.drawSprite(sprite);
+	for (auto sprite : m_sprites)
+		m_surface.drawSprite(sprite);
 }
