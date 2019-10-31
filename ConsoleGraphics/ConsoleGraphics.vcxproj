@@ -163,6 +163,7 @@
     <ClCompile Include="Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FrameAnimation.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="bitmap_image.hpp" />
     <ClInclude Include="cg.h" />
