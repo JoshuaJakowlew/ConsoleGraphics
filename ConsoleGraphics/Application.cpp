@@ -1,5 +1,7 @@
+#include <thread>
+
 #include "Application.h"
-#include <iostream>
+
 namespace cg
 {
 	Application::Application(Vec2u resolution, Vec2u fontSize) :
@@ -7,22 +9,17 @@ namespace cg
 		m_surface{ std::move(resolution) },
 		m_eventManager{ m_console.getInputHandle() }
 	{
-		/*if (m_console.isOpen())
-		{
-			m_eventManager.setHandle(m_console.getInputHandle());
-		}*/
 	}
 
 	void Application::start()
 	{
-		//using namespace std::chrono;
-
 		setup();
+		startDrawThread();
+		runMainLoop();
+	}
 
-		Clock clock;
-		//static auto frames = 0;
-		//auto ts = std::chrono::high_resolution_clock::now();
-		
+	void Application::startDrawThread()
+	{
 		auto draw_thread = std::thread{
 			[this]() {
 				while (m_console.isOpen()) {
@@ -37,34 +34,26 @@ namespace cg
 			}
 		};
 
+		draw_thread.detach();
+	}
+
+	void Application::runMainLoop()
+	{
+		Clock clock;
 		while (m_console.isOpen())
 		{
 			Event e;
 			while (m_eventManager.pollEvent(e))
 				processEvent(e);
-			
+
 			update(clock.restart());
-	
-			//draw();
-			
+
 			if (m_surfaceReady == RenderState::DrawEnd)
 			{
-				bool _ = m_console.display(m_surface.getBuffer());
+				if(!m_console.display(m_surface.getBuffer()))
+					m_console.close();
 				m_surfaceReady = RenderState::Displayed;
 			}
-
-			//auto end = high_resolution_clock::now();
-			//auto secs = duration_cast<milliseconds>(end - ts);
-			//frames++;
-			//if (secs > 10s)
-			//{
-			//	std::cout << frames << " frames rendered\n";
-			//	m_stopAll = true;
-			//	m_console.close();
-			//	draw_thread.join();
-			//	//display_thread.join();
-			//	return;
-			//}
 		}
 	}
 

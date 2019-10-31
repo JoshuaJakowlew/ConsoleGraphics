@@ -6,8 +6,6 @@
 #include "EventManager.h"
 #include "Clock.h"
 
-#include "ctpl_stl.h"
-
 namespace cg
 {
 	class Application
@@ -28,7 +26,7 @@ namespace cg
 		virtual void processEvent(const Event& e) noexcept = 0;
 		virtual void update(float dt) noexcept = 0;
 		virtual void draw() noexcept = 0;
-
+	private:
 		enum class RenderState
 		{
 			DrawStart,
@@ -37,6 +35,9 @@ namespace cg
 		};
 
 		RenderState m_surfaceReady = RenderState::DrawEnd;
+
+		void startDrawThread();
+		void runMainLoop();
 	};
 
 } // namespace cg
