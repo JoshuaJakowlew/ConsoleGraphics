@@ -26,11 +26,12 @@ namespace cg
 		auto draw_thread = std::thread{
 			[this]() {
 				while (m_console.isOpen()) {
-					if (m_surfaceReady == 2)
+					if (m_surfaceReady == RenderState::Displayed)
 					{
-						m_surfaceReady = 0;
+						m_surfaceReady = RenderState::DrawStart;
+						m_surface.fill(CHAR_INFO{ L' ', 0x00 });
 						draw();
-						m_surfaceReady = 1;
+						m_surfaceReady = RenderState::DrawEnd;
 					}
 				}
 			}
@@ -46,10 +47,10 @@ namespace cg
 	
 			//draw();
 			
-			if (m_surfaceReady == 1)
+			if (m_surfaceReady == RenderState::DrawEnd)
 			{
 				bool _ = m_console.display(m_surface.getBuffer());
-				m_surfaceReady = 2;
+				m_surfaceReady = RenderState::Displayed;
 			}
 
 			//auto end = high_resolution_clock::now();

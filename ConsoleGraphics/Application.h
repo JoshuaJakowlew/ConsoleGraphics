@@ -29,10 +29,14 @@ namespace cg
 		virtual void update(float dt) noexcept = 0;
 		virtual void draw() noexcept = 0;
 
-		int m_surfaceReady = 2;
-		//bool m_stopAll = false;
-		//std::mutex m_mtx;
-		//ctpl::thread_pool m_pool{ 3 };
+		enum class RenderState
+		{
+			DrawStart,
+			DrawEnd,
+			Displayed
+		};
+
+		RenderState m_surfaceReady = RenderState::DrawEnd;
 	};
 
 } // namespace cg
