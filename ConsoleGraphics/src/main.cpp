@@ -2,6 +2,8 @@
 #include <string>
 #include <chrono>
 
+#include <thirdparty/sol.hpp>
+
 #include "cg.h"
 
 using namespace std::literals;
@@ -26,7 +28,6 @@ private:
 
 	cg::ResourceHolder<std::string, cg::Texture> m_textures;
 	std::vector<cg::Sprite> m_sprites;
-	//cg::FrameAnimation m_animation;
 	cg::Animator<cg::FrameAnimation> m_animator;
 
 	float speed = 25.f;
@@ -36,17 +37,22 @@ int main()
 {
 	using namespace std;
 
-	TestApp app{ { 200, 100 }, { 4, 4 } };
-	app.start();
+	//TestApp app{ { 200, 100 }, { 4, 4 } };
+	//app.start();
+
+	sol::state lua;
+	lua.open_libraries(sol::lib::base);
+	auto mainScript = lua.script_file("assets/scripts/main.lua");
+	
 }
 
 void TestApp::setup() noexcept
 {
 	m_console.setPalette(palette);
 
-	m_textures.acquire("bg", { "assets/bg.bmp", palette });
-	m_textures.acquire("mario", { "assets/sprite.bmp", palette });
-	m_textures.acquire("animation", { "assets/animation.bmp", palette });
+	m_textures.acquire("bg", { "assets/textures/bg.bmp", palette });
+	m_textures.acquire("mario", { "assets/textures/sprite.bmp", palette });
+	m_textures.acquire("animation", { "assets/textures/animation.bmp", palette });
 
 	cg::Sprite bg{ m_textures["bg"] };
 	bg.setOrigin({ 0, 0 });
