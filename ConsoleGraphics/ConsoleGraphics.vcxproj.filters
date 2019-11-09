@@ -13,84 +13,90 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Core">
-      <UniqueIdentifier>{b2f12486-8fff-437a-b091-7824be37444c}</UniqueIdentifier>
+    <Filter Include="Header Files\animations">
+      <UniqueIdentifier>{7c62982b-931a-48e1-ac02-e119653ffaf3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Core">
-      <UniqueIdentifier>{30e4c165-3960-4c03-b9c9-693aff5ede99}</UniqueIdentifier>
+    <Filter Include="Header Files\rendering">
+      <UniqueIdentifier>{6e952f88-37c5-4987-a706-3828cabb4608}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Core\Graphics">
-      <UniqueIdentifier>{2b66f32b-24c1-49ea-8b39-8b582c1a90ce}</UniqueIdentifier>
+    <Filter Include="Header Files\application">
+      <UniqueIdentifier>{7719e47b-12ee-4b05-b8b7-d7c3a81fc230}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Core\Graphics">
-      <UniqueIdentifier>{75b8f921-03bf-4317-a347-a942d8fec2fe}</UniqueIdentifier>
+    <Filter Include="Header Files\resources">
+      <UniqueIdentifier>{4a62c3ec-36cd-4030-b835-fef665531575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\utils">
+      <UniqueIdentifier>{9d90947f-1879-45ae-bbc5-4607ed713b33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\application">
+      <UniqueIdentifier>{1063e517-c09f-49d2-900c-4382a4911247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\rendering">
+      <UniqueIdentifier>{684d10a4-125a-4d85-92ad-502569808a1e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderSurface.cpp">
-      <Filter>Source Files\Core\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Core\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Console.cpp">
-      <Filter>Source Files\Core\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EventManager.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
+    <ClInclude Include="include\cg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\animations\Animator.h">
+      <Filter>Header Files\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\animations\FrameAnimation.h">
+      <Filter>Header Files\animations</Filter>
+    </ClInclude>
+    <ClInclude Include="include\application\Application.h">
+      <Filter>Header Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="include\application\Console.h">
+      <Filter>Header Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="include\application\Event.h">
+      <Filter>Header Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="include\application\EventManager.h">
+      <Filter>Header Files\application</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\Clock.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\utils\Vec2.h">
+      <Filter>Header Files\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\resources\ReourceHolder.h">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering\Color.h">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering\RenderSurface.h">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering\Sprite.h">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\rendering\Texture.h">
+      <Filter>Header Files\rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bitmap_image.hpp">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Color.h">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Console.h">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Event.h">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderSurface.h">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Sprite.h">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Vec2.h">
-      <Filter>Header Files\Core\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="cg.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Clock.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="EventManager.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ReourceHolder.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="FrameAnimation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Animator.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
+    <ClCompile Include="src\application\Application.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\application\Console.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\application\EventManager.cpp">
+      <Filter>Source Files\application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\RenderSurface.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\Texture.cpp">
+      <Filter>Source Files\rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

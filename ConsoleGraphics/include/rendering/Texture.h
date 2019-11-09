@@ -10,8 +10,8 @@
 #include <cassert>
 #include <optional>
 
-#include "bitmap_image.hpp"
-#include "Vec2.h"
+#include "thirdparty/bitmap_image.hpp"
+#include "utils/Vec2.h"
 #include "Color.h"
 
 namespace cg

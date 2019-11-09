@@ -7,8 +7,8 @@
 #include <type_traits>
 #include <cassert>
 
-#include "Vec2.h"
-#include "Color.h"
+#include "utils/Vec2.h"
+#include "rendering/Color.h"
 
 namespace cg
 {

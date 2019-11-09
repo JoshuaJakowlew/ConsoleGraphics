@@ -1,6 +1,6 @@
 #include <thread>
 
-#include "Application.h"
+#include "application/Application.h"
 
 namespace cg
 {

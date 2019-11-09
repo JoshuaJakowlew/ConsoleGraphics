@@ -18,6 +18,30 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\animations\Animator.h" />
+    <ClInclude Include="include\animations\FrameAnimation.h" />
+    <ClInclude Include="include\application\Application.h" />
+    <ClInclude Include="include\application\Console.h" />
+    <ClInclude Include="include\application\Event.h" />
+    <ClInclude Include="include\application\EventManager.h" />
+    <ClInclude Include="include\cg.h" />
+    <ClInclude Include="include\rendering\Color.h" />
+    <ClInclude Include="include\rendering\RenderSurface.h" />
+    <ClInclude Include="include\rendering\Sprite.h" />
+    <ClInclude Include="include\rendering\Texture.h" />
+    <ClInclude Include="include\resources\ReourceHolder.h" />
+    <ClInclude Include="include\utils\Clock.h" />
+    <ClInclude Include="include\utils\Vec2.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\application\Application.cpp" />
+    <ClCompile Include="src\application\Console.cpp" />
+    <ClCompile Include="src\application\EventManager.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\rendering\RenderSurface.cpp" />
+    <ClCompile Include="src\rendering\Texture.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{C1FDC0E6-E573-495B-8718-CACA87D188FC}</ProjectGuid>
@@ -104,6 +128,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -145,6 +170,7 @@
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -154,31 +180,6 @@
       <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Application.cpp" />
-    <ClCompile Include="Console.cpp" />
-    <ClCompile Include="EventManager.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="RenderSurface.cpp" />
-    <ClCompile Include="Texture.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Animator.h" />
-    <ClInclude Include="FrameAnimation.h" />
-    <ClInclude Include="Application.h" />
-    <ClInclude Include="bitmap_image.hpp" />
-    <ClInclude Include="cg.h" />
-    <ClInclude Include="Clock.h" />
-    <ClInclude Include="Color.h" />
-    <ClInclude Include="Console.h" />
-    <ClInclude Include="Event.h" />
-    <ClInclude Include="EventManager.h" />
-    <ClInclude Include="RenderSurface.h" />
-    <ClInclude Include="ReourceHolder.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Vec2.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

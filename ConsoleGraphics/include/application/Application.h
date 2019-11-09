@@ -2,9 +2,9 @@
 #define APPLICATION_H
 
 #include "Console.h"
-#include "RenderSurface.h"
+#include "rendering/RenderSurface.h"
 #include "EventManager.h"
-#include "Clock.h"
+#include "utils/Clock.h"
 
 namespace cg
 {

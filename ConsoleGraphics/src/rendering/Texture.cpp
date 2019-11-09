@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "rendering/Texture.h"
 
 namespace cg
 {

@@ -4,7 +4,7 @@
 #include <vector>
 #include <tuple>
 
-#include "Sprite.h"
+#include "rendering/Sprite.h"
 
 namespace cg
 {
