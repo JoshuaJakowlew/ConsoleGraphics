@@ -4,4 +4,7 @@
 #include "Application.h"
 #include "ReourceHolder.h"
 
+#include "Animator.h"
+#include "FrameAnimation.h"
+
 #endif
