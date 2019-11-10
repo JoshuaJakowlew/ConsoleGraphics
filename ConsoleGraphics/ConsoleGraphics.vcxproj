@@ -26,6 +26,7 @@
     <ClInclude Include="include\application\Event.h" />
     <ClInclude Include="include\application\EventManager.h" />
     <ClInclude Include="include\cg.h" />
+    <ClInclude Include="include\lua\Api.h" />
     <ClInclude Include="include\rendering\Color.h" />
     <ClInclude Include="include\rendering\RenderSurface.h" />
     <ClInclude Include="include\rendering\Sprite.h" />

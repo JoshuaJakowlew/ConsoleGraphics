@@ -8,4 +8,6 @@
 #include "animations/Animator.h"
 #include "animations/FrameAnimation.h"
 
+#include "lua/Api.h"
+
 #endif

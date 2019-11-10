@@ -40,10 +40,13 @@ int main()
 	//TestApp app{ { 200, 100 }, { 4, 4 } };
 	//app.start();
 
+
 	sol::state lua;
 	lua.open_libraries(sol::lib::base);
+
+	cg::lua::Vec2(lua);
+
 	auto mainScript = lua.script_file("assets/scripts/main.lua");
-	
 }
 
 void TestApp::setup() noexcept

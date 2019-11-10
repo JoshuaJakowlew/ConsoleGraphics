@@ -34,6 +34,9 @@
     <Filter Include="Source Files\rendering">
       <UniqueIdentifier>{684d10a4-125a-4d85-92ad-502569808a1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\lua-api">
+      <UniqueIdentifier>{3a426d16-05d5-47d8-89eb-5841dfd2b6fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cg.h">
@@ -77,6 +80,9 @@
     </ClInclude>
     <ClInclude Include="include\rendering\Texture.h">
       <Filter>Header Files\rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lua\Api.h">
+      <Filter>Header Files\lua-api</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
