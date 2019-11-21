@@ -57,6 +57,31 @@ namespace cg::lua::detail
 
 		type["loadFromBitmap"] = &cg::Texture::loadFromBitmap;
 	}
+
+	void Color(const std::string& name, sol::state& lua)
+	{
+		auto type = lua.new_usertype<cg::Color>(
+			name,
+			sol::constructors<
+				cg::Color(),
+				cg::Color(wchar_t, uint16_t),
+				cg::Color(wchar_t, uint16_t, uint16_t)
+			>());
+
+		type["toCharInfo"] = &cg::Color::toCharInfo;
+
+		type["glyph"] = sol::property(
+			[](const cg::Color& color) { return color.glyph; },
+			[](cg::Color& color, wchar_t glyph) { color.glyph =glyph; });
+
+		type["bgColor"] = sol::property(
+			[](const cg::Color& color) { return color.bgColor; },
+			[](cg::Color& color, uint16_t bgColor) { color.bgColor = bgColor; });
+
+		type["fgColor"] = sol::property(
+			[](const cg::Color& color) { return color.fgColor; },
+			[](cg::Color& color, uint16_t fgColor) { color.fgColor = fgColor; });
+	}
 }
 
 namespace cg::lua::type
@@ -78,6 +103,9 @@ namespace cg::lua::type
 
 	template <>
 	constexpr auto name<cg::Texture> = "Texture";
+
+	template <>
+	constexpr auto name<cg::Color> = "Color";
 }
 
 namespace cg::lua
@@ -97,6 +125,11 @@ namespace cg::lua
 	void Texture(sol::state& lua)
 	{
 		detail::Texture(type::name<cg::Texture>, lua);
+	}
+
+	void Color(sol::state& lua)
+	{
+		detail::Color(type::name<cg::Color>, lua);
 	}
 
 } // namespace cg::lua

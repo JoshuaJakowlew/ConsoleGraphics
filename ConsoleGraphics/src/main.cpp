@@ -42,11 +42,12 @@ int main()
 
 
 	sol::state lua;
-	lua.open_libraries(sol::lib::base, sol::lib::os);
+	lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::string);
 
 	cg::lua::Vec2(lua);
 	cg::lua::Clock(lua);
 	cg::lua::Texture(lua);
+	cg::lua::Color(lua);
 
 	auto mainScript = lua.script_file("assets/scripts/main.lua");
 }
