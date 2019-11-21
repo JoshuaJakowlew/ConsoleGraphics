@@ -12,29 +12,49 @@ namespace cg::lua::detail
 	template <typename T>
 	void Vec2(const std::string& name, sol::state& lua)
 	{
+		#pragma region TypeDefinition
 		auto type = lua.new_usertype<cg::Vec2<T>>(
 			name,
-			sol::constructors<cg::Vec2<T>(), cg::Vec2<T>(T, T)>());
+			sol::constructors<cg::Vec2<T>(), cg::Vec2<T>(T, T)>(),
+			
+			sol::meta_function::unary_minus,
+			[](const cg::Vec2<T>& right)
+			{
+				return -right;
+			},
 
+			sol::meta_function::addition,
+			[](const cg::Vec2<T>& left, const cg::Vec2<T>& right)
+			{
+				return left + right;
+			},
+
+			sol::meta_function::subtraction,
+			[](const cg::Vec2<T>& left, const cg::Vec2<T>& right)
+			{
+				return left - right;
+			},
+
+			sol::meta_function::multiplication,
+			[](const cg::Vec2<T>& left, T right)
+			{
+				return left * right;
+			},
+
+			sol::meta_function::division,
+			[](const cg::Vec2<T>& left, T right)
+			{
+				return left / right;
+			});
+		#pragma endregion
+		
 		type["x"] = sol::property(
 			[](const cg::Vec2<T>& vec) { return vec.x; },
-			[](cg::Vec2<T>& vec, unsigned val) { vec.x = val; });
+			[](cg::Vec2<T>& vec, T val) { vec.x = val; });
 
 		type["y"] = sol::property(
 			[](const cg::Vec2<T>& vec) { return vec.y; },
-			[](cg::Vec2<T>& vec, unsigned val) { vec.y = val; });
-
-		type["neg"] = [](const cg::Vec2<T>& right) { return -right; };
-
-		type["add"] = [](const cg::Vec2<T>& left, const cg::Vec2<T>& right) { return left + right; };
-
-		type["sub"] = [](const cg::Vec2<T>& left, const cg::Vec2<T>& right) { return left - right; };
-
-		type["mul"] = sol::overload(
-			[](T left, const cg::Vec2<T>& right) { return left * right; },
-			[](const cg::Vec2<T>& left, T right) { return left * right; });
-
-		type["div"] = [](const cg::Vec2<T>& left, T right) { return left / right; };
+			[](cg::Vec2<T>& vec, T val) { vec.y = val; });
 	}
 
 	void Clock(const std::string& name, sol::state& lua)
