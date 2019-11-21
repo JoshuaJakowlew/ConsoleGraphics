@@ -4,6 +4,7 @@
 #include <thirdparty/sol.hpp>
 
 #include <utils/Vec2.h>
+#include <utils/Clock.h>
 
 namespace cg::lua::detail
 {
@@ -34,6 +35,17 @@ namespace cg::lua::detail
 
 		type["div"] = [](const cg::Vec2<T>& left, T right) { return left / right; };
 	}
+
+	void Clock(const std::string& name, sol::state& lua)
+	{
+		auto type = lua.new_usertype<cg::Clock>(
+			name,
+			sol::constructors<cg::Clock()>());
+
+		type["getElapsed"] = &cg::Clock::getElapsed;
+
+		type["restart"] = &cg::Clock::restart;
+	}
 }
 
 namespace cg::lua::type
@@ -49,6 +61,9 @@ namespace cg::lua::type
 
 	template <>
 	constexpr auto name<cg::Vec2f> = "Vec2f";
+
+	template <>
+	constexpr auto name<cg::Clock> = "Clock";
 }
 
 namespace cg::lua
@@ -58,6 +73,11 @@ namespace cg::lua
 		detail::Vec2<int>(type::name<cg::Vec2<int>>, lua);
 		detail::Vec2<unsigned>(type::name<cg::Vec2<unsigned>>, lua);
 		detail::Vec2<float>(type::name<cg::Vec2<float>>, lua);
+	}
+
+	void Clock(sol::state& lua)
+	{
+		detail::Clock(type::name<cg::Clock>, lua);
 	}
 
 } // namespace cg::lua
