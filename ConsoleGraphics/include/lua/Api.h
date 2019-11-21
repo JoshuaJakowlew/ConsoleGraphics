@@ -5,6 +5,7 @@
 
 #include <utils/Vec2.h>
 #include <utils/Clock.h>
+#include <rendering/Texture.h>
 
 namespace cg::lua::detail
 {
@@ -60,27 +61,80 @@ namespace cg::lua::detail
 
 	void Color(const std::string& name, sol::state& lua)
 	{
+		lua["makeColor"] = sol::overload(
+			[]()
+			{
+				return cg::Color{};
+			},
+			[](CHAR_INFO color)
+			{
+				return cg::Color{ color };
+			},
+			[](uint16_t glyph, uint16_t color)
+			{
+				return cg::Color{
+					glyph,
+					color
+				};
+			},
+			[](uint16_t glyph, uint16_t bgColor, uint16_t fgColor)
+			{
+				return cg::Color{
+					static_cast<wchar_t>(glyph),
+					bgColor,
+					fgColor
+				};
+			});
+
 		auto type = lua.new_usertype<cg::Color>(
 			name,
-			sol::constructors<
-				cg::Color(),
-				cg::Color(wchar_t, uint16_t),
-				cg::Color(wchar_t, uint16_t, uint16_t)
-			>());
+			sol::constructors<cg::Color()>());
+
+		type["glyph"] = sol::property(
+			[](const cg::Color& color)
+			{
+				return color.glyph;
+			},
+			[](cg::Color& color, uint16_t glyph)
+			{
+				color.glyph = static_cast<wchar_t>(glyph);
+			});
+
+		type["bgColor"] = sol::property(
+			[](const cg::Color& color)
+			{
+				return color.bgColor;
+			},
+			[](cg::Color& color, uint16_t bgColor)
+			{
+				color.bgColor = bgColor;
+			});
+
+		type["fgColor"] = sol::property(
+			[](const cg::Color& color)
+			{
+				return color.fgColor;
+			},
+			[](cg::Color& color, uint16_t fgColor)
+			{
+				color.fgColor = fgColor;
+			});
 
 		type["toCharInfo"] = &cg::Color::toCharInfo;
 
-		type["glyph"] = sol::property(
-			[](const cg::Color& color) { return color.glyph; },
-			[](cg::Color& color, wchar_t glyph) { color.glyph =glyph; });
+		lua["makeCharInfo"] = [](uint16_t glyph, uint16_t bgColor, uint16_t fgColor)
+		{
+			return cg::makeCharInfo(
+				static_cast<wchar_t>(glyph),
+				bgColor,
+				fgColor);
+		};
 
-		type["bgColor"] = sol::property(
-			[](const cg::Color& color) { return color.bgColor; },
-			[](cg::Color& color, uint16_t bgColor) { color.bgColor = bgColor; });
+		lua["combine"] = &cg::combine;
 
-		type["fgColor"] = sol::property(
-			[](const cg::Color& color) { return color.fgColor; },
-			[](cg::Color& color, uint16_t fgColor) { color.fgColor = fgColor; });
+		lua["getBgColor"] = &cg::getBgColor;
+
+		lua["getFgColor"] = &cg::getFgColor;
 	}
 }
 
