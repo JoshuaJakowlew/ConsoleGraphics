@@ -33,11 +33,26 @@ print(vec2.x, vec2.y)
 print('Clock test')
 clock = Clock.new()
 
-sleep(1)
+--sleep(1)
 print(clock:getElapsed())
 
-sleep(1)
+--sleep(1)
 print(clock:restart())
 
-sleep(1)
+--sleep(1)
 print(clock:getElapsed())
+
+print('Texture test')
+texture = Texture.new()
+size = texture:getSize()
+print(size.x, size.y)
+
+texture:loadFromBitmap('assets/textures/bg.bmp')
+size = texture:getSize()
+print(size.x, size.y)
+
+texture = Texture.new('assets/textures/sprite.bmp')
+size = texture:getSize()
+print(size.x, size.y)
+
+-- texture:setPalette()

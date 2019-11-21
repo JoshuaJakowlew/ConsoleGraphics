@@ -46,6 +46,17 @@ namespace cg::lua::detail
 
 		type["restart"] = &cg::Clock::restart;
 	}
+
+	void Texture(const std::string& name, sol::state& lua)
+	{
+		auto type = lua.new_usertype<cg::Texture>(
+			name,
+			sol::constructors<cg::Texture(), cg::Texture(std::string_view)>());
+
+		type["getSize"] = &cg::Texture::getSize;
+
+		type["loadFromBitmap"] = &cg::Texture::loadFromBitmap;
+	}
 }
 
 namespace cg::lua::type
@@ -64,6 +75,9 @@ namespace cg::lua::type
 
 	template <>
 	constexpr auto name<cg::Clock> = "Clock";
+
+	template <>
+	constexpr auto name<cg::Texture> = "Texture";
 }
 
 namespace cg::lua
@@ -78,6 +92,11 @@ namespace cg::lua
 	void Clock(sol::state& lua)
 	{
 		detail::Clock(type::name<cg::Clock>, lua);
+	}
+
+	void Texture(sol::state& lua)
+	{
+		detail::Texture(type::name<cg::Texture>, lua);
 	}
 
 } // namespace cg::lua

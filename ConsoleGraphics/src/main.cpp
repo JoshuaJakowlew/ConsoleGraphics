@@ -46,6 +46,7 @@ int main()
 
 	cg::lua::Vec2(lua);
 	cg::lua::Clock(lua);
+	cg::lua::Texture(lua);
 
 	auto mainScript = lua.script_file("assets/scripts/main.lua");
 }
