@@ -7,9 +7,8 @@
 
 #include <application/Application.h>
 #include <resources/ReourceHolder.h>
-
-#include "animations/Animator.h"
-#include "animations/FrameAnimation.h"
+#include <animations/Animator.h>
+#include <animations/FrameAnimation.h>
 
 namespace cg::lua::detail
 {
