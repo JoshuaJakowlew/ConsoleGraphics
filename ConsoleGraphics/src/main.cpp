@@ -11,11 +11,11 @@ int main(int argc, char* argv[])
 	if (argc != 6)
 	{
 		// Run default configuration if no command-line params provided
-		cg::LuaApplication app{ {200, 100}, {4, 4}, L"Test" };
-		app.start();
+		/*cg::LuaApplication app{ {200, 100}, {4, 4}, L"Test" };
+		app.start();*/
 		
-		// std::puts("Not enough parameters");
-		// return 1;
+		std::puts("Not enough parameters");
+		return 1;
 	}
 
 	const cg::Vec2u resolution{

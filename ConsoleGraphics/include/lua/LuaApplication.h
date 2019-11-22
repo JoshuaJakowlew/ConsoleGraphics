@@ -8,7 +8,7 @@ namespace cg
 	class LuaApplication : public cg::Application
 	{
 	public:
-		using SetupHandler = std::function<void()>;
+		using SetupHandler = std::function<void(const sol::table&)>;
 		using ProcessEventHandler = std::function<void(const sol::table&)>;
 		using UpdateHandler = std::function<void(float)>;
 		using DrawHandler = std::function<void(cg::RenderSurface&)>;
@@ -23,6 +23,8 @@ namespace cg
 
 		void draw() noexcept override;
 	private:
+		constexpr static size_t m_GC_MAX_MEM = 1024 * 1024 * 256; // 256MB
+
 		std::mutex m_lock;
 
 		sol::state m_lua;

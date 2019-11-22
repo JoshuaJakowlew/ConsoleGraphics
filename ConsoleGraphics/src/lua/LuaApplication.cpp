@@ -12,8 +12,13 @@ namespace cg
 
 	void LuaApplication::setup() noexcept
 	{
+		auto table = m_lua.create_table();
+		table["console"] = std::ref(m_console);
+		table["render"] = std::ref(m_surface);
+		table["gcMaxMem"] = m_GC_MAX_MEM;
+
 		std::lock_guard<std::mutex> lock{ m_lock };
-		m_setupHandler();
+		m_setupHandler(table);
 	}
 
 	void LuaApplication::processEvent(const cg::Event& e) noexcept
@@ -48,6 +53,8 @@ namespace cg
 		lua::SpriteHolder(m_lua);
 		lua::FrameAnimation(m_lua);
 		lua::FrameAnimator(m_lua);
+		lua::Palette(m_lua);
+		lua::Console(m_lua);
 	}
 
 	void LuaApplication::setHandlers()
