@@ -44,6 +44,8 @@ namespace cg
 		lua::Color(m_lua);
 		lua::Sprite(m_lua);
 		lua::RenderSurface(m_lua);
+		lua::TextureHolder(m_lua);
+		lua::SpriteHolder(m_lua);
 	}
 
 	void LuaApplication::setHandlers()

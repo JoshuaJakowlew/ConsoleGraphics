@@ -6,6 +6,7 @@
 #include <thirdparty/sol.hpp>
 
 #include <application/Application.h>
+#include <resources/ReourceHolder.h>
 
 namespace cg::lua::detail
 {
@@ -62,6 +63,24 @@ namespace cg::lua::detail
 	extern void Color(const std::string& name, sol::state& lua);
 	extern void Sprite(const std::string& name, sol::state& lua);
 	extern void RenderSurface(const std::string& name, sol::state& lua);
+	
+	template <typename K, typename V>
+	void ResourceHolder(const std::string& name, sol::state& lua)
+	{
+		using HolderType = cg::ResourceHolder<K, V>;
+		auto type = lua.new_usertype <HolderType>(
+			name,
+			sol::constructors<HolderType()>(),
+
+			sol::meta_function::index,
+			[](HolderType& holder, std::string key)
+			{
+				return holder[std::move(key)];
+			});
+
+		type["acquire"] = &HolderType::acquire;
+		type["release"] = &HolderType::release;
+	}
 
 } // namespace cg::lua::detail
 
@@ -93,6 +112,12 @@ namespace cg::lua::type
 
 	template <>
 	constexpr auto name<cg::RenderSurface> = "RenderSurface";
+
+	template <>
+	constexpr auto name<cg::ResourceHolder<std::string, cg::Texture>> = "TextureHolder";
+
+	template <>
+	constexpr auto name<cg::ResourceHolder<std::string, cg::Sprite>> = "SpriteHolder";
 
 } // namespace cg::lua::type
 
@@ -128,6 +153,18 @@ namespace cg::lua
 	inline void RenderSurface(sol::state& lua)
 	{
 		detail::RenderSurface(type::name<cg::RenderSurface>, lua);
+	}
+
+	inline void TextureHolder(sol::state& lua)
+	{
+		detail::ResourceHolder<std::string, cg::Texture>(
+			type::name<cg::ResourceHolder<std::string, cg::Texture>>, lua);
+	}
+
+	inline void SpriteHolder(sol::state& lua)
+	{
+		detail::ResourceHolder<std::string, cg::Sprite>(
+			type::name<cg::ResourceHolder<std::string, cg::Sprite>>, lua);
 	}
 
 } // namespace cg::lua
