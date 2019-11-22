@@ -34,6 +34,12 @@
     <Filter Include="Source Files\rendering">
       <UniqueIdentifier>{684d10a4-125a-4d85-92ad-502569808a1e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\lua-api">
+      <UniqueIdentifier>{3a426d16-05d5-47d8-89eb-5841dfd2b6fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lua-api">
+      <UniqueIdentifier>{95ab90b6-b56d-4bca-a1ea-1e6c6e3b03d0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\cg.h">
@@ -78,6 +84,12 @@
     <ClInclude Include="include\rendering\Texture.h">
       <Filter>Header Files\rendering</Filter>
     </ClInclude>
+    <ClInclude Include="include\lua\Api.h">
+      <Filter>Header Files\lua-api</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lua\LuaApplication.h">
+      <Filter>Header Files\lua-api</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\application\Application.cpp">
@@ -97,6 +109,12 @@
     </ClCompile>
     <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lua\LuaApplication.cpp">
+      <Filter>Source Files\lua-api</Filter>
+    </ClCompile>
+    <ClCompile Include="src\lua\Api.cpp">
+      <Filter>Source Files\lua-api</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

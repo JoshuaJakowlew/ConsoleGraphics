@@ -4,11 +4,12 @@
 
 namespace cg
 {
-	Application::Application(Vec2u resolution, Vec2u fontSize) :
+	Application::Application(Vec2u resolution, Vec2u fontSize, std::wstring_view title) :
 		m_console{ std::move(resolution), std::move(fontSize) },
 		m_surface{ std::move(resolution) },
 		m_eventManager{ m_console.getInputHandle() }
 	{
+		m_console.setTitle(title);
 	}
 
 	void Application::start()

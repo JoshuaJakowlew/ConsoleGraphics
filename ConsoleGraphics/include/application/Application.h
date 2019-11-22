@@ -11,7 +11,10 @@ namespace cg
 	class Application
 	{
 	public:
-		Application(Vec2u resolution, Vec2u fontSize);
+		Application(
+			Vec2u resolution,
+			Vec2u fontSize,
+			std::wstring_view title = L"Application");
 
 		void start();
 	protected:

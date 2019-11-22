@@ -11,39 +11,39 @@ namespace cg
 	class ResourceHolder
 	{
 	public:
-		[[nodiscard]] auto acquire(K&& key, V&& value) -> void;
-		auto release(K&& key) -> void;
-		[[nodiscard]] auto operator[](K&&) -> V&;
-		[[nodiscard]] auto operator[](K&&) const -> const V&;
+		[[nodiscard]] auto acquire(const K& key, const V& value) -> void;
+		auto release(const K& key) -> void;
+		[[nodiscard]] auto operator[](const K&) -> V&;
+		[[nodiscard]] auto operator[](const K&) const -> const V&;
 	private:
 		std::unordered_map<K, V> m_storage;
 	};
 
 	template<typename K, typename V>
-	inline auto cg::ResourceHolder<K, V>::acquire(K&& key, V&& value) -> void
+	inline auto cg::ResourceHolder<K, V>::acquire(const K& key, const V& value) -> void
 	{
-		m_storage.insert(std::make_pair(std::forward<K>(key), std::forward<V>(value)));
+		m_storage.insert(std::make_pair(key, value));
 	}
 
 	template<typename K, typename V>
-	inline auto cg::ResourceHolder<K, V>::release(K&& key) -> void
+	inline auto cg::ResourceHolder<K, V>::release(const K& key) -> void
 	{
-		m_storage.erase(std::forward<K>(key));
+		m_storage.erase(key);
 	}
 
 	template <typename K, typename V>
-	inline auto ResourceHolder<K, V>::operator[](K&& key) -> V&
+	inline auto ResourceHolder<K, V>::operator[](const K& key) -> V&
 	{
-		const auto elem = m_storage.find(std::forward<K>(key));
+		const auto elem = m_storage.find(key);
 		if (elem == m_storage.end())
 			throw std::logic_error{ "K not found" };
 		return elem->second;
 	}
 
 	template <typename K, typename V>
-	inline auto ResourceHolder<K, V>::operator[](K&& key) const -> const V&
+	inline auto ResourceHolder<K, V>::operator[](const K& key) const -> const V&
 	{
-		return this->operator[](std::forward<K>(key));
+		return this->operator[](key);
 	}
 
 } // namespace cg
