@@ -33,7 +33,7 @@ private:
 
 int main(int argc, char* argv[])
 {
-	if (argc != 6)
+	/*if (argc != 6)
 	{
 		std::puts("Not enough parameters");
 		return 1;
@@ -57,6 +57,9 @@ int main(int argc, char* argv[])
 	const std::wstring wtitle{ std::begin(title), std::end(title) };
 
 	cg::LuaApplication app{ resolution, fontSize, wtitle };
+	app.start();*/
+
+	cg::LuaApplication app{ {200, 100}, {4, 4}, L"Test" };
 	app.start();
 }
 

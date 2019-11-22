@@ -91,9 +91,6 @@ namespace cg::lua::type
 	template <>
 	constexpr auto name<cg::Sprite> = "Sprite";
 
-	/*template <>
-	constexpr auto name<cg::LuaApplication> = "LuaApplication";*/
-
 	template <>
 	constexpr auto name<cg::RenderSurface> = "RenderSurface";
 

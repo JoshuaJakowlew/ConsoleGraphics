@@ -18,8 +18,10 @@ namespace cg
 
 	void LuaApplication::processEvent(const cg::Event& e) noexcept
 	{
+		auto lua_event = translateEvent(e);
+
 		std::lock_guard<std::mutex> lock{ m_lock };
-		m_processEventHandler(e);
+		m_processEventHandler(lua_event);
 	}
 
 	inline void LuaApplication::update(float dt) noexcept
@@ -57,6 +59,51 @@ namespace cg
 		m_lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::string);
 
 		m_lua.script_file("assets/scripts/main.lua");
+	}
+
+	sol::table LuaApplication::translateEvent(const Event& e)
+	{
+		auto lua_event = m_lua.create_table();;
+		if (EventType::KeyPressed == e.type)
+		{
+			lua_event["type"] = "KeyPressed";
+			lua_event["controlKeyState"] = e.key.controlKeyState;
+			lua_event["scanCode"] = e.key.scanCode;
+			lua_event["key"] = std::wstring{ e.key.key };
+		}
+		else if (EventType::KeyReleased == e.type)
+		{
+			lua_event["type"] = "KeyReleased";
+			lua_event["controlKeyState"] = e.key.controlKeyState;
+			lua_event["scanCode"] = e.key.scanCode;
+			lua_event["key"] = std::wstring{ e.key.key };
+		}
+		else if (EventType::MouseMove == e.type)
+		{
+			lua_event["type"] = "MouseMoved";
+
+			const Vec2i position = { e.mouseMove.position.X, e.mouseMove.position.Y };
+			lua_event["position"] = position;
+		}
+		else if (EventType::MouseClick == e.type)
+		{
+			lua_event["type"] = "MouseMoved";
+
+			const Vec2i position = { e.mouseMove.position.X, e.mouseMove.position.Y };
+			lua_event["position"] = position;
+
+			lua_event["mouseButton"] =
+				(e.mouseClick.button == MouseButton::Left) ? "Left" : "Right";
+
+			lua_event["doubleClick"] = e.mouseClick.doubleClick;
+		}
+		else
+		{
+			lua_event["type"] = std::string{ "Raw" };
+			lua_event["data"] = e.raw.data;
+		}
+
+		return lua_event;
 	}
 
 } // namespace cg

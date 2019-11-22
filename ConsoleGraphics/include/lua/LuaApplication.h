@@ -9,7 +9,7 @@ namespace cg
 	{
 	public:
 		using SetupHandler = std::function<void()>;
-		using ProcessEventHandler = std::function<void(const cg::Event&)>;
+		using ProcessEventHandler = std::function<void(const sol::table&)>;
 		using UpdateHandler = std::function<void(float)>;
 		using DrawHandler = std::function<void(cg::RenderSurface&)>;
 
@@ -35,6 +35,8 @@ namespace cg
 		void loadApi();
 		void setHandlers();
 		void runLua();
+
+		sol::table translateEvent(const Event& e);
 	};
 
 } // namespace cg
