@@ -192,4 +192,16 @@ namespace cg::lua::detail
 		type["drawSprite"] = &cg::RenderSurface::drawSprite;
 	}
 
+	void FrameAnimation(const std::string& name, sol::state& lua)
+	{
+		auto type = lua.new_usertype<cg::FrameAnimation>(
+			name,
+			sol::constructors<cg::FrameAnimation()>(),
+			
+			sol::meta_function::call,
+			&cg::FrameAnimation::operator());
+
+		type["addFrame"] = &cg::FrameAnimation::addFrame;
+	}
+
 } // namespace cg::lua::detail

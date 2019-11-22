@@ -8,6 +8,9 @@
 #include <application/Application.h>
 #include <resources/ReourceHolder.h>
 
+#include "animations/Animator.h"
+#include "animations/FrameAnimation.h"
+
 namespace cg::lua::detail
 {
 	template <typename T>
@@ -82,6 +85,28 @@ namespace cg::lua::detail
 		type["release"] = &HolderType::release;
 	}
 
+	extern void FrameAnimation(const std::string& name, sol::state& lua);
+
+	template <typename Animated>
+	void Animator(const std::string& name, sol::state& lua)
+	{
+		using AnimatorType = cg::Animator<Animated>;
+		auto type = lua.new_usertype<AnimatorType>(
+			name,
+			sol::constructors<AnimatorType()>());
+
+		type["addAnimation"] = &AnimatorType::addAnimation;
+		type["removeAnimation"] = &AnimatorType::removeAnimation;
+		
+		type["play"] = &AnimatorType::play;
+		type["stop"] = &AnimatorType::stop;
+		type["update"] = &AnimatorType::update;
+
+		type["playAnimation"] = &AnimatorType::playAnimation;
+		type["isPlayingAnimation"] = &AnimatorType::isPlayingAnimation;
+		type["getPlayingAnimation"] = &AnimatorType::getPlayingAnimation;
+	}
+
 } // namespace cg::lua::detail
 
 namespace cg::lua::type
@@ -118,6 +143,13 @@ namespace cg::lua::type
 
 	template <>
 	constexpr auto name<cg::ResourceHolder<std::string, cg::Sprite>> = "SpriteHolder";
+
+	template <>
+	constexpr auto name<cg::FrameAnimation> = "FrameAnimation";
+
+	template <>
+	constexpr auto name<cg::Animator<cg::FrameAnimation>> = "FrameAnimator";
+
 
 } // namespace cg::lua::type
 
@@ -165,6 +197,17 @@ namespace cg::lua
 	{
 		detail::ResourceHolder<std::string, cg::Sprite>(
 			type::name<cg::ResourceHolder<std::string, cg::Sprite>>, lua);
+	}
+
+	inline void FrameAnimation(sol::state& lua)
+	{
+		detail::FrameAnimation(type::name<cg::FrameAnimation>, lua);
+	}
+
+	inline void FrameAnimator(sol::state& lua)
+	{
+		detail::Animator<cg::FrameAnimation>(
+			type::name<cg::Animator<cg::FrameAnimation>>, lua);
 	}
 
 } // namespace cg::lua

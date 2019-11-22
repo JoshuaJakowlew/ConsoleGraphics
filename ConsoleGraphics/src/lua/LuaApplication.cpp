@@ -46,6 +46,8 @@ namespace cg
 		lua::RenderSurface(m_lua);
 		lua::TextureHolder(m_lua);
 		lua::SpriteHolder(m_lua);
+		lua::FrameAnimation(m_lua);
+		lua::FrameAnimator(m_lua);
 	}
 
 	void LuaApplication::setHandlers()

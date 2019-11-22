@@ -32,7 +32,7 @@ namespace cg
 		mutable float m_elapsedTime = 0.f;
 	};
 
-	void FrameAnimation::addFrame(float duration, Vec2u left, Vec2u right)
+	inline void FrameAnimation::addFrame(float duration, Vec2u left, Vec2u right)
 	{
 		m_anims.emplace_back(left, right, duration);
 	}
