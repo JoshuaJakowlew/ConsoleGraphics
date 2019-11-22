@@ -75,9 +75,9 @@ namespace cg::lua::detail
 			sol::constructors<HolderType()>(),
 
 			sol::meta_function::index,
-			[](HolderType& holder, std::string key)
+			[](HolderType& holder, std::string key) -> V&
 			{
-				return holder[std::move(key)];
+				return holder[key];
 			});
 
 		type["acquire"] = &HolderType::acquire;
@@ -106,12 +106,15 @@ namespace cg::lua::detail
 		type["getPlayingAnimation"] = &AnimatorType::getPlayingAnimation;
 	}
 
+	extern void Palette(const std::string& name, sol::state& lua);
+	extern void Console(const std::string& name, sol::state& lua);
+
 } // namespace cg::lua::detail
 
 namespace cg::lua::type
 {
 	template <typename T = void>
-	constexpr auto name = {};
+	constexpr auto name = "";
 
 	template <>
 	constexpr auto name<cg::Vec2i> = "Vec2i";
@@ -149,6 +152,11 @@ namespace cg::lua::type
 	template <>
 	constexpr auto name<cg::Animator<cg::FrameAnimation>> = "FrameAnimator";
 
+	template <>
+	constexpr auto name<cg::Palette> = "Palette";
+
+	template <>
+	constexpr auto name<cg::Console> = "Console";
 
 } // namespace cg::lua::type
 
@@ -207,6 +215,16 @@ namespace cg::lua
 	{
 		detail::Animator<cg::FrameAnimation>(
 			type::name<cg::Animator<cg::FrameAnimation>>, lua);
+	}
+
+	inline void Palette(sol::state& lua)
+	{
+		detail::Palette(type::name<cg::Palette>, lua);
+	}
+
+	inline void Console(sol::state& lua)
+	{
+		detail::Console(type::name<cg::Console>, lua);
 	}
 
 } // namespace cg::lua

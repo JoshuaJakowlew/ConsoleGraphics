@@ -1,4 +1,6 @@
 #include <lua/Api.h>
+#include <iostream>
+using namespace std;
 
 namespace cg::lua::detail
 {
@@ -131,13 +133,13 @@ namespace cg::lua::detail
 
 		type["setTexture"] = sol::overload(
 			[](cg::Sprite& sprite,
-				const cg::Texture* texture, Vec2u left, Vec2u right)
+				const cg::Texture& texture, Vec2u left, Vec2u right)
 			{
-				sprite.setTexture(texture, left, right);
+				sprite.setTexture(&texture, left, right);
 			},
-			[](cg::Sprite& sprite, const cg::Texture* texture)
+			[](cg::Sprite& sprite, const cg::Texture& texture)
 			{
-				sprite.setTexture(texture);
+				sprite.setTexture(&texture);
 			});
 
 		type["setTextureRect"] = &cg::Sprite::setTextureRect;
@@ -197,11 +199,49 @@ namespace cg::lua::detail
 		auto type = lua.new_usertype<cg::FrameAnimation>(
 			name,
 			sol::constructors<cg::FrameAnimation()>(),
-			
+
 			sol::meta_function::call,
 			&cg::FrameAnimation::operator());
 
 		type["addFrame"] = &cg::FrameAnimation::addFrame;
+	}
+
+	void Palette(const std::string& name, sol::state& lua)
+	{
+		auto palette = lua.create_table();
+		palette["size"] = cg::palette::size;
+		palette["default"] = cg::palette::defaultPalette;
+		palette["rgb"] = [](int r, int g, int b) { return RGB(r, g, b); };
+		palette["new"] = [](const sol::table& palette) {
+			return cg::Palette{
+				static_cast<COLORREF>(palette[1]),
+				static_cast<COLORREF>(palette[2]),
+				static_cast<COLORREF>(palette[3]),
+				static_cast<COLORREF>(palette[4]),
+				static_cast<COLORREF>(palette[5]),
+				static_cast<COLORREF>(palette[6]),
+				static_cast<COLORREF>(palette[7]),
+				static_cast<COLORREF>(palette[8]),
+				static_cast<COLORREF>(palette[9]),
+				static_cast<COLORREF>(palette[10]),
+				static_cast<COLORREF>(palette[11]),
+				static_cast<COLORREF>(palette[12]),
+				static_cast<COLORREF>(palette[13]),
+				static_cast<COLORREF>(palette[14]),
+				static_cast<COLORREF>(palette[15]),
+				static_cast<COLORREF>(palette[16])
+			};
+		};
+
+		lua["Palette"] = palette;
+	}
+
+	void Console(const std::string& name, sol::state& lua)
+	{
+		auto type = lua.new_usertype<cg::Console>(name);
+
+		type["setTitle"] = &cg::Console::setTitle;
+		type["setPalette"] = &cg::Console::setPalette;
 	}
 
 } // namespace cg::lua::detail
