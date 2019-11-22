@@ -3,9 +3,8 @@
 
 #include <thirdparty/sol.hpp>
 
-#include <utils/Vec2.h>
 #include <utils/Clock.h>
-#include <rendering/Texture.h>
+#include <rendering/Sprite.h>
 
 namespace cg::lua::detail
 {
@@ -156,6 +155,75 @@ namespace cg::lua::detail
 
 		lua["getFgColor"] = &cg::getFgColor;
 	}
+
+	void Sprite(const std::string& name, sol::state& lua)
+	{
+		auto type = lua.new_usertype<cg::Sprite>(
+			name,
+			sol::constructors<
+				cg::Sprite(const cg::Texture&),
+				cg::Sprite(const cg::Texture&, Vec2u, Vec2u)
+			>(),
+			
+			sol::meta_function::index,
+			&cg::Sprite::operator[]);
+
+		type["getPos"] = &cg::Sprite::getPos;
+		type["getActualPos"] = &cg::Sprite::getActualPos;
+		type["getSize"] = &cg::Sprite::getSize;
+		type["getOrigin"] = &cg::Sprite::getOrigin;
+
+		type["at"] = sol::overload(
+			[](const cg::Sprite& sprite, Vec2u pos)
+			{
+				return sprite.at(pos);
+			},
+			[](const cg::Sprite& sprite, unsigned x, unsigned y)
+			{
+				return sprite.at(x, y);
+			});
+
+		type["setTexture"] = sol::overload(
+			[](cg::Sprite& sprite,
+				const cg::Texture* texture, Vec2u left, Vec2u right)
+			{
+				sprite.setTexture(texture, left, right);
+			},
+			[](cg::Sprite& sprite, const cg::Texture* texture)
+			{
+				sprite.setTexture(texture);
+			});
+
+		type["setTextureRect"] = &cg::Sprite::setTextureRect;
+
+		type["setPos"] = &cg::Sprite::setPos;
+
+		type["setOrigin"] = &cg::Sprite::setOrigin;
+		
+		type["move"] = sol::overload(
+			[](cg::Sprite& sprite, Vec2f offset)
+			{
+				sprite.move(offset);
+			},
+			[](cg::Sprite& sprite, Vec2i offset)
+			{
+				sprite.move(offset);
+			});
+
+		type["isTransparent"] = &cg::Sprite::isTransparent;
+
+		type["setTransparent"] = sol::overload(
+			[](cg::Sprite& sprite, bool transparent)
+			{
+				sprite.setTransparent(transparent);
+			},
+			[](cg::Sprite& sprite, bool transparent, CHAR_INFO color)
+			{
+				sprite.setTransparent(transparent, color);
+			});
+
+		type["getTransparentColor"] = &cg::Sprite::getTransparentColor;
+	}
 }
 
 namespace cg::lua::type
@@ -180,6 +248,9 @@ namespace cg::lua::type
 
 	template <>
 	constexpr auto name<cg::Color> = "Color";
+
+	template <>
+	constexpr auto name<cg::Sprite> = "Sprite";
 }
 
 namespace cg::lua
@@ -204,6 +275,11 @@ namespace cg::lua
 	void Color(sol::state& lua)
 	{
 		detail::Color(type::name<cg::Color>, lua);
+	}
+
+	void Sprite(sol::state& lua)
+	{
+		detail::Sprite(type::name<cg::Sprite>, lua);
 	}
 
 } // namespace cg::lua

@@ -3,11 +3,6 @@ function sleep(s)
     repeat until os.time() > ntime
 end
 
-print('Vec2<T> test')
-vec1 = Vec2u.new(1, 1)
-vec2 = Vec2u.new(1, 1)
-vec1 = vec1 + vec2
-print(vec1.x, vec1.y)
 
 print('Color test')
 -- color = Color.new()
@@ -25,3 +20,12 @@ print(makeCharInfo(string.byte('@'), 2, 5))
 print(combine(1, 1))
 print(getBgColor(32))
 print(getFgColor(33))
+
+print('Texture test')
+tex = Texture.new('assets/textures/sprite.bmp')
+sz = tex:getSize()
+print(sz.x, sz.y)
+
+print('Sprite test')
+sprite = Sprite.new(tex, Vec2u.new(0, 0), Vec2u.new(7, 7))
+print(sprite:getSize().x, sprite:getSize().y)

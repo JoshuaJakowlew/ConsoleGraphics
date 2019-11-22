@@ -48,6 +48,7 @@ int main()
 	cg::lua::Clock(lua);
 	cg::lua::Texture(lua);
 	cg::lua::Color(lua);
+	cg::lua::Sprite(lua);
 
 	auto mainScript = lua.script_file("assets/scripts/main.lua");
 }
