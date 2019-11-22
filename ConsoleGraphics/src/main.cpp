@@ -2,8 +2,6 @@
 #include <string>
 #include <chrono>
 
-#include <thirdparty/sol.hpp>
-
 #include "cg.h"
 
 using namespace std::literals;
@@ -37,20 +35,21 @@ int main()
 {
 	using namespace std;
 
-	//TestApp app{ { 200, 100 }, { 4, 4 } };
-	//app.start();
+	cg::LuaApplication app{ { 200, 100 }, { 4, 4 } };
+	app.start();
 
 
-	sol::state lua;
-	lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::string);
+	//sol::state lua;
+	//lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::string);
 
-	cg::lua::Vec2(lua);
-	cg::lua::Clock(lua);
-	cg::lua::Texture(lua);
-	cg::lua::Color(lua);
-	cg::lua::Sprite(lua);
+	//cg::lua::Vec2(lua);
+	//cg::lua::Clock(lua);
+	//cg::lua::Texture(lua);
+	//cg::lua::Color(lua);
+	//cg::lua::Sprite(lua);
+	//// cg::lua::LuaApplication(lua);
 
-	auto mainScript = lua.script_file("assets/scripts/main.lua");
+	//auto mainScript = lua.script_file("assets/scripts/main.lua");
 }
 
 void TestApp::setup() noexcept

@@ -27,6 +27,7 @@
     <ClInclude Include="include\application\EventManager.h" />
     <ClInclude Include="include\cg.h" />
     <ClInclude Include="include\lua\Api.h" />
+    <ClInclude Include="include\lua\LuaApplication.h" />
     <ClInclude Include="include\rendering\Color.h" />
     <ClInclude Include="include\rendering\RenderSurface.h" />
     <ClInclude Include="include\rendering\Sprite.h" />
@@ -39,6 +40,8 @@
     <ClCompile Include="src\application\Application.cpp" />
     <ClCompile Include="src\application\Console.cpp" />
     <ClCompile Include="src\application\EventManager.cpp" />
+    <ClCompile Include="src\lua\Api.cpp" />
+    <ClCompile Include="src\lua\LuaApplication.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\rendering\RenderSurface.cpp" />
     <ClCompile Include="src\rendering\Texture.cpp" />
@@ -133,6 +136,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\thirdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
