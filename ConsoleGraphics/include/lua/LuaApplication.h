@@ -13,7 +13,7 @@ namespace cg
 		using UpdateHandler = std::function<void(float)>;
 		using DrawHandler = std::function<void(cg::RenderSurface&)>;
 
-		LuaApplication(Vec2u resolution, Vec2u fontSize);
+		LuaApplication(Vec2u resolution, Vec2u fontSize, std::wstring_view title);
 
 		void setup() noexcept override;
 

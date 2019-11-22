@@ -31,25 +31,33 @@ private:
 	float speed = 25.f;
 };
 
-int main()
+int main(int argc, char* argv[])
 {
-	using namespace std;
+	if (argc != 6)
+	{
+		std::puts("Not enough parameters");
+		return 1;
+	}
 
-	cg::LuaApplication app{ { 200, 100 }, { 4, 4 } };
+	const cg::Vec2u resolution{
+		cg::Vec2i{
+			std::atoi(argv[1]),
+			std::atoi(argv[2])
+		}
+	};
+
+	const cg::Vec2u fontSize{
+		cg::Vec2i{
+			std::atoi(argv[3]),
+			std::atoi(argv[4])
+		}
+	};
+
+	const std::string title = argv[5];
+	const std::wstring wtitle{ std::begin(title), std::end(title) };
+
+	cg::LuaApplication app{ resolution, fontSize, wtitle };
 	app.start();
-
-
-	//sol::state lua;
-	//lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::string);
-
-	//cg::lua::Vec2(lua);
-	//cg::lua::Clock(lua);
-	//cg::lua::Texture(lua);
-	//cg::lua::Color(lua);
-	//cg::lua::Sprite(lua);
-	//// cg::lua::LuaApplication(lua);
-
-	//auto mainScript = lua.script_file("assets/scripts/main.lua");
 }
 
 void TestApp::setup() noexcept

@@ -2,8 +2,8 @@
 
 namespace cg
 {
-	LuaApplication::LuaApplication(Vec2u resolution, Vec2u fontSize) :
-		cg::Application{ resolution, fontSize }
+	LuaApplication::LuaApplication(Vec2u resolution, Vec2u fontSize, std::wstring_view title) :
+		cg::Application{ resolution, fontSize, title }
 	{
 		loadApi();
 		runLua();
@@ -55,6 +55,7 @@ namespace cg
 	void LuaApplication::runLua()
 	{
 		m_lua.open_libraries(sol::lib::base, sol::lib::os, sol::lib::string);
+
 		m_lua.script_file("assets/scripts/main.lua");
 	}
 
